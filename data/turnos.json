@@ -1,0 +1,192 @@
+[
+  {
+    "id": "TUR-01",
+    "pacienteId": "PAC-01",
+    "profesionalId": "PRO-01",
+    "diaSemana": 1,
+    "desplazamiento": 0,
+    "hora": "08:00",
+    "estado": "CONFIRMADO",
+    "motivo": "Control de presión arterial"
+  },
+  {
+    "id": "TUR-02",
+    "pacienteId": "PAC-02",
+    "profesionalId": "PRO-01",
+    "diaSemana": 1,
+    "desplazamiento": 0,
+    "hora": "09:00",
+    "estado": "PENDIENTE",
+    "motivo": "Dolor abdominal persistente"
+  },
+  {
+    "id": "TUR-03",
+    "pacienteId": "PAC-04",
+    "profesionalId": "PRO-01",
+    "diaSemana": 1,
+    "desplazamiento": 0,
+    "hora": "10:30",
+    "estado": "EN_CONSULTORIO",
+    "motivo": "Seguimiento de tratamiento"
+  },
+  {
+    "id": "TUR-04",
+    "pacienteId": "PAC-05",
+    "profesionalId": "PRO-02",
+    "diaSemana": 1,
+    "desplazamiento": 0,
+    "hora": "09:00",
+    "estado": "CONFIRMADO",
+    "motivo": "Consulta de rutina"
+  },
+  {
+    "id": "TUR-05",
+    "pacienteId": "PAC-07",
+    "profesionalId": "PRO-02",
+    "diaSemana": 1,
+    "desplazamiento": 0,
+    "hora": "10:20",
+    "estado": "PENDIENTE",
+    "motivo": "Fiebre"
+  },
+  {
+    "id": "TUR-06",
+    "pacienteId": "PAC-01",
+    "profesionalId": "PRO-05",
+    "diaSemana": 1,
+    "desplazamiento": 0,
+    "hora": "08:20",
+    "estado": "PENDIENTE",
+    "motivo": "Control de visión"
+  },
+  {
+    "id": "TUR-07",
+    "pacienteId": "PAC-06",
+    "profesionalId": "PRO-03",
+    "diaSemana": 2,
+    "desplazamiento": 0,
+    "hora": "14:00",
+    "estado": "CONFIRMADO",
+    "motivo": "Electrocardiograma de control"
+  },
+  {
+    "id": "TUR-08",
+    "pacienteId": "PAC-02",
+    "profesionalId": "PRO-03",
+    "diaSemana": 2,
+    "desplazamiento": 0,
+    "hora": "15:20",
+    "estado": "PENDIENTE",
+    "motivo": "Derivación por cardióloga"
+  },
+  {
+    "id": "TUR-09",
+    "pacienteId": "PAC-03",
+    "profesionalId": "PRO-02",
+    "diaSemana": 2,
+    "desplazamiento": 0,
+    "hora": "11:00",
+    "estado": "CONFIRMADO",
+    "motivo": "Vacunación"
+  },
+  {
+    "id": "TUR-10",
+    "pacienteId": "PAC-03",
+    "profesionalId": "PRO-02",
+    "diaSemana": 1,
+    "desplazamiento": -1,
+    "hora": "09:40",
+    "estado": "ASISTIDO",
+    "motivo": "Control de crecimiento"
+  },
+  {
+    "id": "TUR-11",
+    "pacienteId": "PAC-04",
+    "profesionalId": "PRO-01",
+    "diaSemana": 3,
+    "desplazamiento": 0,
+    "hora": "08:30",
+    "estado": "CONFIRMADO",
+    "motivo": "Revisión de estudios"
+  },
+  {
+    "id": "TUR-12",
+    "pacienteId": "PAC-07",
+    "profesionalId": "PRO-04",
+    "diaSemana": 3,
+    "desplazamiento": 0,
+    "hora": "11:00",
+    "estado": "PENDIENTE",
+    "motivo": "Dermatitis en el brazo"
+  },
+  {
+    "id": "TUR-13",
+    "pacienteId": "PAC-05",
+    "profesionalId": "PRO-01",
+    "diaSemana": 3,
+    "desplazamiento": 0,
+    "hora": "11:30",
+    "estado": "PENDIENTE",
+    "motivo": "Certificado médico"
+  },
+  {
+    "id": "TUR-14",
+    "pacienteId": "PAC-06",
+    "profesionalId": "PRO-03",
+    "diaSemana": 4,
+    "desplazamiento": 0,
+    "hora": "16:00",
+    "estado": "CONFIRMADO",
+    "motivo": "Consulta de seguimiento"
+  },
+  {
+    "id": "TUR-15",
+    "pacienteId": "PAC-03",
+    "profesionalId": "PRO-05",
+    "diaSemana": 4,
+    "desplazamiento": 0,
+    "hora": "10:00",
+    "estado": "PENDIENTE",
+    "motivo": "Estrabismo"
+  },
+  {
+    "id": "TUR-16",
+    "pacienteId": "PAC-04",
+    "profesionalId": "PRO-04",
+    "diaSemana": 5,
+    "desplazamiento": 0,
+    "hora": "10:30",
+    "estado": "CONFIRMADO",
+    "motivo": "Control de lunares"
+  },
+  {
+    "id": "TUR-17",
+    "pacienteId": "PAC-02",
+    "profesionalId": "PRO-01",
+    "diaSemana": 3,
+    "desplazamiento": -1,
+    "hora": "10:00",
+    "estado": "ASISTIDO",
+    "motivo": "Gripe"
+  },
+  {
+    "id": "TUR-18",
+    "pacienteId": "PAC-07",
+    "profesionalId": "PRO-01",
+    "diaSemana": 1,
+    "desplazamiento": -1,
+    "hora": "11:00",
+    "estado": "AUSENTE",
+    "motivo": "No asistió"
+  },
+  {
+    "id": "TUR-19",
+    "pacienteId": "PAC-05",
+    "profesionalId": "PRO-02",
+    "diaSemana": 4,
+    "desplazamiento": 0,
+    "hora": "09:20",
+    "estado": "CANCELADO",
+    "motivo": "Cancelado por el paciente"
+  }
+]

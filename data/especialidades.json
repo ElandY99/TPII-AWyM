@@ -1,0 +1,27 @@
+[
+  {
+    "id": "ESP-01",
+    "nombre": "Clínica Médica",
+    "descripcion": "Atención general de salud para adultos."
+  },
+  {
+    "id": "ESP-02",
+    "nombre": "Pediatría",
+    "descripcion": "Atención de salud de niños y adolescentes."
+  },
+  {
+    "id": "ESP-03",
+    "nombre": "Cardiología",
+    "descripcion": "Diagnóstico y tratamiento del sistema cardiovascular."
+  },
+  {
+    "id": "ESP-04",
+    "nombre": "Dermatología",
+    "descripcion": "Diagnóstico y tratamiento de enfermedades de la piel."
+  },
+  {
+    "id": "ESP-05",
+    "nombre": "Oftalmología",
+    "descripcion": "Estudio y tratamiento de la visión y el ojo."
+  }
+]

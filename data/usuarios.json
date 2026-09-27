@@ -1,0 +1,57 @@
+[
+  {
+    "id": "USR-01",
+    "nombre": "Andrés Elpeza",
+    "correo": "admin@turnos.com",
+    "password": "admin123",
+    "rol": "ADMIN",
+    "profesionalId": null,
+    "activo": true
+  },
+  {
+    "id": "USR-02",
+    "nombre": "José Benítez",
+    "correo": "recepcion@turnos.com",
+    "password": "recepcion123",
+    "rol": "RECEPCION",
+    "profesionalId": null,
+    "activo": true
+  },
+  {
+    "id": "USR-03",
+    "nombre": "Valeria Sosa",
+    "correo": "vsosa@turnos.com",
+    "password": "profesional123",
+    "rol": "PROFESIONAL",
+    "profesionalId": "PRO-01",
+    "activo": true
+  },
+  {
+    "id": "USR-04",
+    "nombre": "Cecilia Bravo",
+    "correo": "cbravo@turnos.com",
+    "password": "profesional123",
+    "rol": "PROFESIONAL",
+    "profesionalId": "PRO-03",
+    "activo": true
+  },
+  {
+    "id": "USR-05",
+    "nombre": "Lucía Fernández",
+    "correo": "lucia.fernandez@correo.com",
+    "password": "paciente123",
+    "rol": "PACIENTE",
+    "profesionalId": null,
+    "pacienteId": "PAC-01",
+    "activo": true
+  },
+  {
+    "id": "USR-06",
+    "nombre": "Cuenta dada de baja",
+    "correo": "inactivo@turnos.com",
+    "password": "inactivo123",
+    "rol": "RECEPCION",
+    "profesionalId": null,
+    "activo": false
+  }
+]

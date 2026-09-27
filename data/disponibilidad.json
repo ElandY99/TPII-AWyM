@@ -1,0 +1,106 @@
+[
+  {
+    "profesionalId": "PRO-01",
+    "diaSemana": 1,
+    "horaInicio": "08:00",
+    "horaFin": "12:00",
+    "duracionMin": 30,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-01",
+    "diaSemana": 3,
+    "horaInicio": "08:00",
+    "horaFin": "12:00",
+    "duracionMin": 30,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-01",
+    "diaSemana": 5,
+    "horaInicio": "08:00",
+    "horaFin": "11:00",
+    "duracionMin": 30,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-02",
+    "diaSemana": 1,
+    "horaInicio": "09:00",
+    "horaFin": "13:00",
+    "duracionMin": 20,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-02",
+    "diaSemana": 2,
+    "horaInicio": "09:00",
+    "horaFin": "13:00",
+    "duracionMin": 20,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-02",
+    "diaSemana": 3,
+    "horaInicio": "09:00",
+    "horaFin": "13:00",
+    "duracionMin": 20,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-02",
+    "diaSemana": 4,
+    "horaInicio": "09:00",
+    "horaFin": "12:00",
+    "duracionMin": 20,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-03",
+    "diaSemana": 2,
+    "horaInicio": "14:00",
+    "horaFin": "18:00",
+    "duracionMin": 40,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-03",
+    "diaSemana": 4,
+    "horaInicio": "14:00",
+    "horaFin": "18:00",
+    "duracionMin": 40,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-04",
+    "diaSemana": 3,
+    "horaInicio": "10:00",
+    "horaFin": "14:00",
+    "duracionMin": 30,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-04",
+    "diaSemana": 5,
+    "horaInicio": "10:00",
+    "horaFin": "14:00",
+    "duracionMin": 30,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-05",
+    "diaSemana": 1,
+    "horaInicio": "08:00",
+    "horaFin": "12:00",
+    "duracionMin": 20,
+    "activo": true
+  },
+  {
+    "profesionalId": "PRO-05",
+    "diaSemana": 4,
+    "horaInicio": "08:00",
+    "horaFin": "12:00",
+    "duracionMin": 20,
+    "activo": true
+  }
+]

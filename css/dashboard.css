@@ -1,0 +1,110 @@
+.saludo__saludo {
+  margin: 0 0 var(--espacio-1);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--color-acento);
+}
+
+.tarjeta-accion__icono {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: var(--texto-lg);
+  color: var(--color-primario);
+  background-color: var(--color-primario-claro);
+  border-radius: var(--radio-md);
+}
+
+.item-turno__fecha {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--espacio-1);
+  margin-left: auto;
+}
+
+.reparto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  padding: var(--espacio-4);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+}
+
+.reparto__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+}
+
+.reparto__etiqueta {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+}
+
+.reparto__cantidad {
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  color: var(--color-primario);
+}
+
+.reparto__barra {
+  height: 10px;
+  overflow: hidden;
+  background-color: var(--color-superficie-alterna);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-full);
+}
+
+.reparto__relleno {
+  display: block;
+  height: 100%;
+  background-color: var(--color-primario);
+}
+
+.reparto__relleno--pendiente {
+  background-color: var(--estado-pendiente);
+}
+
+.reparto__relleno--confirmado {
+  background-color: var(--estado-confirmado);
+}
+
+.reparto__relleno--en_consultorio {
+  background-color: var(--estado-consultorio);
+}
+
+.reparto__relleno--asistido {
+  background-color: var(--estado-asistido);
+}
+
+.reparto__relleno--ausente {
+  background-color: var(--estado-ausente);
+}
+
+.reparto__relleno--cancelado {
+  background-color: var(--estado-cancelado);
+}
+
+.reparto__detalle {
+  margin: 0;
+  font-size: var(--texto-xs);
+  color: var(--color-texto-tenue);
+}
+
+@media (min-width: 600px) {
+  .item-turno {
+    flex-wrap: nowrap;
+  }
+
+  .item-turno__fecha {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--espacio-3);
+  }
+}

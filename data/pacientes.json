@@ -1,0 +1,79 @@
+[
+  {
+    "id": "PAC-01",
+    "dni": "30111222",
+    "nombre": "Lucía",
+    "apellido": "Fernández",
+    "fechaNacimiento": "1990-04-12",
+    "telefono": "3514567890",
+    "correo": "lucia.fernandez@correo.com",
+    "obraSocial": "OSDE",
+    "activo": true
+  },
+  {
+    "id": "PAC-02",
+    "dni": "32233445",
+    "nombre": "Martín",
+    "apellido": "Gómez",
+    "fechaNacimiento": "1985-11-30",
+    "telefono": "3514012233",
+    "correo": "martin.gomez@correo.com",
+    "obraSocial": "Galenos",
+    "activo": true
+  },
+  {
+    "id": "PAC-03",
+    "dni": "28765431",
+    "nombre": "Sofía",
+    "apellido": "Ramírez",
+    "fechaNacimiento": "2015-08-05",
+    "telefono": "3516325478",
+    "correo": "sofia.ramirez@correo.com",
+    "obraSocial": "PAMI",
+    "activo": true
+  },
+  {
+    "id": "PAC-04",
+    "dni": "34455667",
+    "nombre": "Diego",
+    "apellido": "Sosa",
+    "fechaNacimiento": "1996-01-22",
+    "telefono": "3517788990",
+    "correo": "diego.sosa@correo.com",
+    "obraSocial": "Med Santé",
+    "activo": true
+  },
+  {
+    "id": "PAC-05",
+    "dni": "30111998",
+    "nombre": "Julieta",
+    "apellido": "Castro",
+    "fechaNacimiento": "2001-06-18",
+    "telefono": "3512456987",
+    "correo": "julieta.castro@correo.com",
+    "obraSocial": "OSDE",
+    "activo": true
+  },
+  {
+    "id": "PAC-06",
+    "dni": "33220110",
+    "nombre": "Emiliano",
+    "apellido": "Vera",
+    "fechaNacimiento": "1979-09-09",
+    "telefono": "3519988776",
+    "correo": "emiliano.vera@correo.com",
+    "obraSocial": "Swiss Medical",
+    "activo": true
+  },
+  {
+    "id": "PAC-07",
+    "dni": "29774455",
+    "nombre": "Ana",
+    "apellido": "Bustos",
+    "fechaNacimiento": "1982-03-27",
+    "telefono": "3513344556",
+    "correo": "ana.bustos@correo.com",
+    "obraSocial": "Galenos",
+    "activo": true
+  }
+]

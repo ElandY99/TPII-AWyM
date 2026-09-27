@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Solicitar turno · TurnoMed</title>
+    <meta name="description" content="Formulario de solicitud de turno médico." />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f6f6b' stroke-width='2' stroke-linecap='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='3'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3Cpath d='M12 14v4M10 16h4'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/turno-form.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header id="app-header" class="header"></header>
+
+      <main id="contenido" class="principal">
+        <section class="seccion" aria-labelledby="titulo-turno">
+          <div class="seccion__cabecera">
+            <div>
+              <h1 id="titulo-turno" class="seccion__titulo">Solicitar turno</h1>
+              <p class="seccion__ayuda">
+                Completá los pasos en orden. Solo se ofrecen los horarios que el profesional atiende
+                y que están libres.
+              </p>
+            </div>
+            <a class="boton boton--secundario boton--compacto" href="agenda.html">Ver agenda</a>
+          </div>
+
+          <div class="zona-mensajes" data-zona-mensajes></div>
+
+          <ol class="pasos" aria-label="Pasos de la solicitud">
+            <li class="paso" id="paso-1">
+              <span class="paso__numero">1</span> Paciente
+            </li>
+            <li class="paso" id="paso-2">
+              <span class="paso__numero">2</span> Profesional
+            </li>
+            <li class="paso" id="paso-3">
+              <span class="paso__numero">3</span> Fecha y hora
+            </li>
+          </ol>
+
+          <form id="formulario-turno" class="formulario formulario--ancho" novalidate>
+            <fieldset class="bloque" id="bloque-paciente">
+              <legend class="bloque__leyenda">
+                <span class="bloque__paso">Paso 1</span>
+                Paciente
+              </legend>
+
+              <div class="busca">
+                <svg class="icono" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M11 4a7 7 0 1 1 0 14 7 7 0 0 1 0-14Zm9 16-4.5-4.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <label class="sr-solo" for="buscar-paciente">
+                  Buscar paciente por DNI, nombre o apellido
+                </label>
+                <input
+                  class="campo__control"
+                  type="search"
+                  id="buscar-paciente"
+                  placeholder="Buscar paciente por DNI, nombre o apellido"
+                  autocomplete="off"
+                />
+              </div>
+
+              <div id="resultados" class="resultados" role="listbox" aria-label="Pacientes encontrados"></div>
+
+              <div class="paciente-elegido" id="paciente-elegido" hidden>
+                <span class="avatar" id="avatar-eleccion" aria-hidden="true"></span>
+                <div class="paciente-elegido__datos">
+                  <p class="paciente-elegido__nombre" id="nombre-eleccion"></p>
+                  <p class="paciente-elegido__meta" id="meta-eleccion"></p>
+                </div>
+                <button class="boton boton--secundario boton--compacto" type="button" id="cambiar-paciente">
+                  Cambiar
+                </button>
+              </div>
+
+              <input type="hidden" id="pacienteId" name="pacienteId" />
+            </fieldset>
+
+            <fieldset class="bloque" id="bloque-profesional" disabled>
+              <legend class="bloque__leyenda">
+                <span class="bloque__paso">Paso 2</span>
+                Especialidad y profesional
+              </legend>
+
+              <div class="formulario formulario--filas">
+                <div class="campo">
+                  <label class="campo__etiqueta" for="especialidad">
+                    Especialidad <span class="campo__requerido" aria-hidden="true">*</span>
+                  </label>
+                  <select
+                    class="campo__control"
+                    id="especialidad"
+                    name="especialidadId"
+                    required
+                    aria-required="true"
+                  ></select>
+                </div>
+
+                <div class="campo">
+                  <label class="campo__etiqueta" for="profesional">
+                    Profesional <span class="campo__requerido" aria-hidden="true">*</span>
+                  </label>
+                  <select
+                    class="campo__control"
+                    id="profesional"
+                    name="profesionalId"
+                    required
+                    aria-required="true"
+                  ></select>
+                </div>
+              </div>
+
+              <p class="bloque__ayuda" id="ayuda-profesional">
+                Elegí la especialidad y después el profesional que atenderá el turno.
+              </p>
+            </fieldset>
+
+            <fieldset class="bloque" id="bloque-horario" disabled>
+              <legend class="bloque__leyenda">
+                <span class="bloque__paso">Paso 3</span>
+                Fecha y hora
+              </legend>
+
+              <div class="formulario formulario--filas">
+                <div class="campo">
+                  <label class="campo__etiqueta" for="fecha">
+                    Fecha <span class="campo__requerido" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    class="campo__control"
+                    type="date"
+                    id="fecha"
+                    name="fecha"
+                    required
+                    aria-required="true"
+                  />
+                </div>
+
+                <div class="campo">
+                  <label class="campo__etiqueta" for="hora">
+                    Hora <span class="campo__requerido" aria-hidden="true">*</span>
+                  </label>
+                  <select class="campo__control" id="hora" name="hora" required aria-required="true"></select>
+                </div>
+
+                <div class="campo campo--ancho">
+                  <label class="campo__etiqueta" for="motivo">Motivo de la consulta</label>
+                  <textarea
+                    class="campo__control"
+                    id="motivo"
+                    name="motivo"
+                    maxlength="200"
+                    rows="3"
+                    placeholder="Opcional: contá brevemente el motivo de la consulta."
+                  ></textarea>
+                  <p class="campo__ayuda">Hasta 200 caracteres. Se muestra en la agenda interna.</p>
+                </div>
+              </div>
+
+              <div class="disponibilidad" id="disponibilidad" hidden></div>
+            </fieldset>
+
+            <div class="formulario__acciones formulario__acciones--fijo">
+              <a class="boton boton--fantasma" href="dashboard.html">Cancelar</a>
+              <button class="boton boton--primario" type="submit" id="guardar-turno" disabled>
+                Confirmar turno
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div id="app-footer"></div>
+      </footer>
+    </div>
+
+    <dialog id="dialogo-confirmacion" class="dialogo" aria-labelledby="confirmacion-titulo">
+      <div class="dialogo__form">
+        <header class="dialogo__cabecera">
+          <h2 id="confirmacion-titulo" class="dialogo__titulo">Turno confirmado</h2>
+        </header>
+        <div class="dialogo__cuerpo">
+          <p id="confirmacion-texto" class="confirmacion__texto"></p>
+          <dl class="lista-definicion" id="confirmacion-datos"></dl>
+        </div>
+        <footer class="dialogo__acciones">
+          <button class="boton boton--secundario" type="button" id="seguir-solicitando">
+            Solicitar otro
+          </button>
+          <a class="boton boton--primario" href="agenda.html" id="ir-agenda">Ver en la agenda</a>
+        </footer>
+      </div>
+    </dialog>
+
+    <script type="module" src="../js/pages/turno.js"></script>
+  </body>
+</html>

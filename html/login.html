@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iniciar sesión · TurnoMed</title>
+    <meta name="description" content="Ingreso al sistema de gestión de turnos médicos." />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f6f6b' stroke-width='2' stroke-linecap='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='3'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3Cpath d='M12 14v4M10 16h4'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/login.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header id="app-header" class="header"></header>
+
+      <main id="contenido" class="principal">
+        <div class="acceso">
+          <section class="acceso__presentacion" aria-labelledby="acceso-titulo">
+            <h1 id="acceso-titulo" class="acceso__titulo">Gestioná tus turnos en un solo lugar</h1>
+            <p class="acceso__bajada">
+              Iniciá sesión con tu cuenta del centro de salud. El menú y las pantallas disponibles
+              cambian según el rol con el que ingreses.
+            </p>
+            <ul class="acceso__puntos">
+              <li class="acceso__punto">
+                <span class="acceso__punto-icono" aria-hidden="true">✓</span>
+                Agenda siempre actualizada y sin horarios duplicados
+              </li>
+              <li class="acceso__punto">
+                <span class="acceso__punto-icono" aria-hidden="true">✓</span>
+                Alta de pacientes con validación de DNI único
+              </li>
+              <li class="acceso__punto">
+                <span class="acceso__punto-icono" aria-hidden="true">✓</span>
+                Indicadores del día listos para tomar decisiones
+              </li>
+            </ul>
+          </section>
+
+          <section class="tarjeta acceso__tarjeta" aria-labelledby="formulario-titulo">
+            <h2 id="formulario-titulo" class="acceso__form-titulo">Iniciar sesión</h2>
+            <p class="acceso__form-bajada">Ingresá tus credenciales para continuar.</p>
+
+            <div class="zona-mensajes" data-zona-mensajes></div>
+
+            <form id="formulario-login" class="formulario" novalidate>
+              <div class="campo">
+                <label class="campo__etiqueta" for="correo">
+                  Correo electrónico <span class="campo__requerido" aria-hidden="true">*</span>
+                </label>
+                <input
+                  class="campo__control"
+                  type="email"
+                  id="correo"
+                  name="correo"
+                  autocomplete="username"
+                  inputmode="email"
+                  placeholder="nombre@centro.com"
+                  required
+                  aria-required="true"
+                />
+                <p class="campo__ayuda">Usá el correo con el que estás registrado en el centro.</p>
+              </div>
+
+              <div class="campo">
+                <label class="campo__etiqueta" for="contrasena">
+                  Contraseña <span class="campo__requerido" aria-hidden="true">*</span>
+                </label>
+                <div class="campo__con-clave">
+                  <input
+                    class="campo__control"
+                    type="password"
+                    id="contrasena"
+                    name="contrasena"
+                    autocomplete="current-password"
+                    required
+                    aria-required="true"
+                  />
+                  <button
+                    class="campo__ver-clave"
+                    type="button"
+                    id="ver-contrasena"
+                    aria-label="Mostrar la contraseña"
+                    aria-pressed="false"
+                  >
+                    Ver
+                  </button>
+                </div>
+              </div>
+
+              <div class="formulario__acciones">
+                <a class="boton boton--fantasma" href="index.html">Volver al inicio</a>
+                <button class="boton boton--primario" type="submit" id="enviar">Entrar</button>
+              </div>
+            </form>
+
+            <details class="pruebas">
+              <summary class="pruebas__resumen">Cuentas de prueba</summary>
+              <p class="pruebas__intro">
+                La autenticación se simula en el cliente contra los datos de
+                <code>data/usuarios.json</code>. Cualquiera de estas cuentas sirve para recorrer el
+                sistema.
+              </p>
+              <div class="pruebas__lista">
+                <div class="pruebas__fila">
+                  <strong>Administrador</strong>
+                  <code>admin@turnos.com</code>
+                  <code>admin123</code>
+                </div>
+                <div class="pruebas__fila">
+                  <strong>Recepcionista</strong>
+                  <code>recepcion@turnos.com</code>
+                  <code>recepcion123</code>
+                </div>
+                <div class="pruebas__fila">
+                  <strong>Profesional</strong>
+                  <code>vsosa@turnos.com</code>
+                  <code>profesional123</code>
+                </div>
+                <div class="pruebas__fila">
+                  <strong>Paciente</strong>
+                  <code>lucia.fernandez@correo.com</code>
+                  <code>paciente123</code>
+                </div>
+              </div>
+            </details>
+          </section>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <div id="app-footer"></div>
+      </footer>
+    </div>
+
+    <script type="module" src="../js/pages/login.js"></script>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+[
+  {
+    "id": "PRO-01",
+    "nombre": "Valeria",
+    "apellido": "Sosa",
+    "especialidadId": "ESP-01",
+    "consultorio": "Consultorio 101",
+    "matricula": "MP 33210",
+    "activo": true
+  },
+  {
+    "id": "PRO-02",
+    "nombre": "Federico",
+    "apellido": "Lombardi",
+    "especialidadId": "ESP-02",
+    "consultorio": "Consultorio 102",
+    "matricula": "MP 30877",
+    "activo": true
+  },
+  {
+    "id": "PRO-03",
+    "nombre": "Cecilia",
+    "apellido": "Bravo",
+    "especialidadId": "ESP-03",
+    "consultorio": "Consultorio 201",
+    "matricula": "MP 40118",
+    "activo": true
+  },
+  {
+    "id": "PRO-04",
+    "nombre": "Gonzalo",
+    "apellido": "Peralta",
+    "especialidadId": "ESP-04",
+    "consultorio": "Consultorio 202",
+    "matricula": "MP 35502",
+    "activo": true
+  },
+  {
+    "id": "PRO-05",
+    "nombre": "Rocío",
+    "apellido": "Ibáñez",
+    "especialidadId": "ESP-05",
+    "consultorio": "Consultorio 203",
+    "matricula": "MP 39944",
+    "activo": true
+  },
+  {
+    "id": "PRO-06",
+    "nombre": "Nicolás",
+    "apellido": "Ferreyra",
+    "especialidadId": "ESP-01",
+    "consultorio": "Consultorio 103",
+    "matricula": "MP 29003",
+    "activo": false
+  },
+  {
+    "id": "PRO-07",
+    "nombre": "Agustina",
+    "apellido": "Roldán",
+    "especialidadId": "ESP-04",
+    "consultorio": "Consultorio 204",
+    "matricula": "MP 42015",
+    "activo": true
+  }
+]
