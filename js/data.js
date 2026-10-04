@@ -178,4 +178,119 @@
     write
   };
 
+  /* -----------------------------------------------------------
+     SISTEMA DE NOTIFICACIONES FLOTANTES (TOASTS) EN APPHELPERS
+     -----------------------------------------------------------
+     AppHelpers proporciona utilidades globales a la aplicación.
+     Aquí se define `AppHelpers.showToast`, encargado de renderizar
+     mensajitos flotantes en la esquina superior derecha.
+  ----------------------------------------------------------- */
+  window.AppHelpers = window.AppHelpers || {};
+
+  /*  Muestra un mensaje emergente (Toast) en la esquina superior derecha.
+  
+  El texto explicativo de la notificación.
+  El tipo de notificación: 'ok' / 'success' (verde), 'bad' / 'error' (rojo), o 'info' (azul).
+  Tiempo en milisegundos antes de ocultar automáticamente (por defecto 5000ms / 5s).
+  ----------------------------------------------------------- */
+
+  window.AppHelpers.showToast = function (message, type = 'info', duration = 5000) {
+    if (!message) return;
+
+    // Crea o recupera el contenedor flotante #toastContainer en el DOM
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.className = 'toast-container';
+      document.body.appendChild(container);
+    }
+
+    // Determina el estilo visual (ok / bad / info) e icono correspondiente
+    const isOk = type === 'ok' || type === 'success';
+    const isBad = type === 'bad' || type === 'error' || type === 'danger';
+    const toastClass = isOk ? 'ok' : isBad ? 'bad' : 'info';
+    const icon = isOk ? '✓' : isBad ? '✕' : 'ℹ';
+
+    // Genera el elemento HTML de la notificación emergente
+    const toast = document.createElement('div');
+    toast.className = `toast ${toastClass}`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+      <span class="toast-icon">${icon}</span>
+      <span class="toast-text">${message}</span>
+      <button class="toast-close" aria-label="Cerrar notificación">&times;</button>
+    `;
+
+    container.appendChild(toast);
+
+    // Función encargada de animar la salida y remover el elemento del DOM
+    let isClosing = false;
+    function removeToast() {
+      if (isClosing) return;
+      isClosing = true;
+      toast.classList.add('hide');
+      setTimeout(function () {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 350);
+    }
+
+    // Permite al usuario cerrar la notificación manualmente antes de los 5s
+    const closeBtn = toast.querySelector('.toast-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', removeToast);
+    }
+
+    // Temporizador automático de 5 segundos (5000ms) para ocultar la notificación
+    setTimeout(removeToast, duration);
+  };
+
+  /**
+   * Observador de mensajes de formulario (MutationObserver).
+   * 
+   * Detecta cuando scripts como turnos.js, pacientes.js o login.js escriben
+   * en elementos como #turnMessage, #patientMessage o #loginMessage.
+   * Oculta el elemento estático original y dispara automáticamente
+   * la notificación flotante emergente con el mensaje y tipo correspondiente.
+   */
+  function initToastObserver() {
+    const messageElements = document.querySelectorAll('.form-message, #turnMessage, #patientMessage, #loginMessage');
+
+    messageElements.forEach(function (el) {
+      // Oculta el mensaje estático para que la notificación sea 100% flotante
+      el.style.display = 'none';
+
+      // Observador de cambios en el texto o clases del elemento de mensaje
+      const observer = new MutationObserver(function () {
+        const text = el.textContent.trim();
+        if (text) {
+          const isOk = el.classList.contains('ok');
+          const isBad = el.classList.contains('bad');
+          const type = isOk ? 'ok' : isBad ? 'bad' : 'info';
+
+          // Invoca la función flotante con el mensaje y tipo detectado
+          window.AppHelpers.showToast(text, type, 5000);
+        }
+      });
+
+      // Configura el observer para escuchar cambios de texto, hijos y atributos (clases)
+      observer.observe(el, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    });
+  }
+
+  // Inicializa el observador automáticamente al cargar la página
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initToastObserver);
+  } else {
+    initToastObserver();
+  }
+
 })();

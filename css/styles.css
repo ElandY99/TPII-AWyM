@@ -5,63 +5,68 @@
 
    En este archivo se aplican:
    - Variables CSS.
-   - Flexbox.
-   - CSS Grid.
-   - Estilos para formularios y tablas.
-   - Diseño responsive mediante Media Queries.
+   - Layout Responsive (Grid + Flexbox).
+   - Sidebar de altura constante sticky con logout fijo.
+   - Menú móvil desplegable.
+   - Formatos para formularios, tablas, badges e indicadores.
    ============================================================= */
 
 /* -------------------------------------------------------------
-   1. VARIABLES DE COLOR
-   -------------------------------------------------------------
-   Las variables permiten reutilizar valores y mantener una misma
-   identidad visual en toda la aplicación.
-------------------------------------------------------------- */
+   1. VARIABLES DE COLOR Y DISEÑO
+   ------------------------------------------------------------- */
 :root {
   --navy: #123a5a;
   --navy-dark: #0d2d46;
   --blue: #2d78b8;
+  --blue-hover: #226299;
+  --blue-light: #edf4fa;
   --bg: #f4f6f8;
   --line: #d9e0e6;
   --text: #24323d;
   --muted: #667784;
   --white: #ffffff;
   --danger: #b3261e;
+  --danger-hover: #8d1e17;
+  --danger-bg: #fdebea;
   --success: #267a45;
+  --success-bg: #e7f5ec;
   --warning-bg: #fff7df;
+  --warning-text: #7a5a18;
+
+  --topbar-height: 58px;
+  --sidebar-width: 210px;
+  --radius: 8px;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: all 0.2s ease-in-out;
 }
 
 /* -------------------------------------------------------------
    2. REGLAS GENERALES
-------------------------------------------------------------- */
-
-/*
-  box-sizing: border-box hace que padding y border estén incluidos
-  dentro del ancho y alto declarado de un elemento.
-*/
+   ------------------------------------------------------------- */
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text);
   background: var(--bg);
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   background: var(--bg);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Se eliminan subrayados de los enlaces por defecto. */
 a {
   color: inherit;
   text-decoration: none;
 }
 
-/* Formularios y botones heredan la tipografía general. */
 button,
 input,
 select,
@@ -69,14 +74,22 @@ textarea {
   font: inherit;
 }
 
+/* Evita zoom automático en navegadores móviles al enfocar inputs */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
 /* -------------------------------------------------------------
-   3. BARRA SUPERIOR
-   -------------------------------------------------------------
-   Se utiliza Flexbox para ubicar la marca a la izquierda y el
-   nombre de la pantalla a la derecha.
-------------------------------------------------------------- */
+   3. BARRA SUPERIOR (TOPBAR)
+   ------------------------------------------------------------- */
 .topbar {
-  min-height: 58px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--topbar-height);
+  min-height: var(--topbar-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -84,34 +97,59 @@ textarea {
   padding: 0 24px;
   background: var(--navy);
   color: var(--white);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.topbar-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .brand {
   font-weight: 700;
+  font-size: 1.1rem;
   letter-spacing: 0.5px;
+  color: var(--white);
 }
 
 .screen-code {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   opacity: 0.9;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Botón hamburguesa para dispositivos móviles */
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.mobile-menu-btn:hover,
+.mobile-menu-btn:focus {
+  background: rgba(255, 255, 255, 0.18);
+  outline: none;
 }
 
 /* -------------------------------------------------------------
-   4. PÁGINA DE INICIO
-------------------------------------------------------------- */
-
-/*
-  El body del Home se convierte en un contenedor Flex vertical.
-  Esto permite que el contenido principal ocupe el espacio libre.
-*/
+   4. PÁGINA DE INICIO (INDEX.HTML)
+   ------------------------------------------------------------- */
 .home-body {
   display: flex;
   flex-direction: column;
 }
 
-/*
-  CSS Grid + place-items:center centra el contenido del hero.
-*/
 .hero {
   flex: 1;
   display: grid;
@@ -126,18 +164,14 @@ textarea {
 
 .hero-card h1 {
   color: var(--navy-dark);
-
-  /*
-    clamp permite un tamaño de fuente flexible:
-    mínimo 2rem, ideal 5vw y máximo 3.6rem.
-  */
-  font-size: clamp(2rem, 5vw, 3.6rem);
+  font-size: clamp(1.8rem, 5vw, 3.4rem);
   margin: 0 0 16px;
+  line-height: 1.2;
 }
 
 .hero-card p {
   color: var(--muted);
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   margin-bottom: 28px;
 }
 
@@ -150,23 +184,21 @@ textarea {
 
 /* -------------------------------------------------------------
    5. LOGIN Y TARJETAS GENERALES
-------------------------------------------------------------- */
-
-/* Centra la tarjeta de Login en la pantalla. */
+   ------------------------------------------------------------- */
 .center-page {
-  min-height: calc(100vh - 58px);
+  min-height: calc(100vh - var(--topbar-height));
   display: grid;
   place-items: center;
   padding: 32px 16px;
 }
 
-/* Estilo compartido por formularios y paneles. */
 .form-card,
 .panel-card {
   background: var(--white);
   border: 1px solid var(--line);
-  border-radius: 8px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
 }
 
 .form-card {
@@ -187,72 +219,108 @@ textarea {
 
 .demo-box {
   margin-top: 20px;
-  padding: 12px;
-  background: #edf4fa;
+  padding: 12px 14px;
+  background: var(--blue-light);
   border-radius: 6px;
+  border-left: 4px solid var(--blue);
   font-size: 0.9rem;
   display: grid;
   gap: 4px;
 }
 
 /* -------------------------------------------------------------
-   6. ESTRUCTURA DE LAS PANTALLAS PRIVADAS
-   -------------------------------------------------------------
-   CSS Grid crea una columna de 190px para el menú y otra columna
-   flexible para el contenido.
-------------------------------------------------------------- */
+   6. ESTRUCTURA Y MENÚ LATERAL (SIDEBAR DE ALTURA CONSTANTE)
+   ------------------------------------------------------------- */
 .app-layout {
   display: grid;
-  grid-template-columns: 190px 1fr;
-  min-height: calc(100vh - 58px);
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: calc(100vh - var(--topbar-height));
+  align-items: start;
 }
 
-/* -------------------------------------------------------------
-   7. MENÚ LATERAL
-------------------------------------------------------------- */
+/*
+  El sidebar se mantiene pegado (sticky) al topbar con altura fija
+  exactamente igual a (100vh - topbar). El botón logout tiene margin-top: auto
+  lo que garantiza que quede siempre visible al pie sin importar el scroll.
+*/
 .sidebar {
   background: #e9eef2;
   border-right: 1px solid var(--line);
   padding: 16px 0;
   display: flex;
   flex-direction: column;
+  position: sticky;
+  top: var(--topbar-height);
+  height: calc(100vh - var(--topbar-height));
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .sidebar a,
 .nav-button {
-  padding: 12px 18px;
+  padding: 12px 20px;
   border: 0;
   background: transparent;
   text-align: left;
   color: #314451;
+  font-weight: 500;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: var(--transition);
+  border-left: 4px solid transparent;
 }
 
-/* Estado hover y enlace activo. */
 .sidebar a:hover,
-.nav-button:hover,
+.nav-button:hover {
+  background: #dce4eb;
+  color: var(--navy);
+}
+
 .sidebar a.active {
   background: var(--navy);
   color: var(--white);
-}
-
-/* Empuja "Cerrar sesión" hacia la parte inferior del menú. */
-.nav-button {
-  width: 100%;
-  margin-top: auto;
-}
-
-/* -------------------------------------------------------------
-   8. CONTENIDO PRINCIPAL
-------------------------------------------------------------- */
-.content {
-  padding: 28px;
-  overflow: hidden;
+  border-left-color: var(--blue);
 }
 
 /*
-  Flexbox permite separar título y botón de acción.
+  margin-top: auto empuja el botón "Cerrar sesión" hacia el pie
+  del sidebar de altura fija.
 */
+.nav-button {
+  width: 100%;
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  color: var(--danger);
+  font-weight: 600;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.nav-button:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* Estilos de barra de desplazamiento para el sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: #c2cbd2;
+  border-radius: 4px;
+}
+
+/* -------------------------------------------------------------
+   7. CONTENIDO PRINCIPAL
+   ------------------------------------------------------------- */
+.content {
+  padding: 28px;
+  min-width: 0;
+}
+
 .page-title-row,
 .section-title {
   display: flex;
@@ -272,54 +340,66 @@ textarea {
 }
 
 .panel-card {
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
 }
 
 /* -------------------------------------------------------------
-   9. INDICADORES DEL DASHBOARD
-   -------------------------------------------------------------
-   Tres columnas en escritorio.
-------------------------------------------------------------- */
+   8. INDICADORES DEL DASHBOARD
+   ------------------------------------------------------------- */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .stat-card {
   background: var(--white);
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 18px;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-card span {
   display: block;
   color: var(--muted);
   font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .stat-card strong {
   display: block;
-  margin-top: 6px;
+  margin-top: 8px;
   color: var(--navy-dark);
-  font-size: 2rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 /* -------------------------------------------------------------
-   10. BOTONES
-------------------------------------------------------------- */
+   9. BOTONES
+   ------------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 9px 16px;
+  min-height: 42px;
+  padding: 9px 18px;
   border-radius: 6px;
   border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
 }
 
 .btn-primary {
@@ -336,18 +416,33 @@ textarea {
   color: var(--white);
 }
 
+.btn-secondary:hover {
+  background: var(--blue-hover);
+}
+
 .btn-light {
   background: var(--white);
   border-color: var(--line);
   color: var(--text);
 }
 
+.btn-light:hover {
+  background: #f8f9fa;
+  border-color: #c0cad3;
+}
+
 .btn-danger {
-  background: #ffffff;
-  border-color: #d6a7a3;
+  background: var(--white);
+  border-color: #eabcb9;
   color: var(--danger);
-  padding: 6px 10px;
-  min-height: 32px;
+  padding: 6px 12px;
+  min-height: 36px;
+  font-size: 0.88rem;
+}
+
+.btn-danger:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger);
 }
 
 .full {
@@ -355,8 +450,8 @@ textarea {
 }
 
 /* -------------------------------------------------------------
-   11. FORMULARIOS
-------------------------------------------------------------- */
+   10. FORMULARIOS
+   ------------------------------------------------------------- */
 .field {
   display: flex;
   flex-direction: column;
@@ -366,6 +461,7 @@ textarea {
 .field label {
   font-weight: 600;
   font-size: 0.92rem;
+  color: var(--navy-dark);
 }
 
 input,
@@ -373,30 +469,33 @@ select,
 textarea {
   width: 100%;
   border: 1px solid #b8c4cc;
-  border-radius: 5px;
-  padding: 10px 11px;
+  border-radius: 6px;
+  padding: 10px 12px;
   background: #ffffff;
   color: var(--text);
+  transition: var(--transition);
 }
 
-/* Estilo visual cuando un campo recibe el foco. */
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 2px solid rgba(45, 120, 184, 0.18);
+  outline: none;
   border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(45, 120, 184, 0.18);
 }
 
 .error {
   min-height: 16px;
   color: var(--danger);
   font-size: 0.82rem;
+  font-weight: 500;
 }
 
 .form-message {
   min-height: 20px;
   margin: 8px 0 0;
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .form-message.ok {
@@ -407,60 +506,56 @@ textarea:focus {
   color: var(--danger);
 }
 
-/*
-  Los formularios principales utilizan una grilla de dos columnas.
-*/
 .grid-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 18px;
 }
 
-/* Permite que un elemento ocupe las dos columnas. */
 .span-2 {
   grid-column: span 2;
 }
 
-/* Flexbox alinea los botones a la derecha. */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 
-/* Clase reutilizable para ocultar elementos. */
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .filter-row {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-/* Filtros de Agenda en dos columnas. */
 .filters-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 18px;
 }
 
 /* -------------------------------------------------------------
-   12. TABLAS
-------------------------------------------------------------- */
+   11. TABLAS Y RESULTADOS
+   ------------------------------------------------------------- */
 .table-wrap {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: 6px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 650px;
+  min-width: 600px;
 }
 
 th,
 td {
-  padding: 11px 10px;
+  padding: 13px 14px;
   border-bottom: 1px solid var(--line);
   text-align: left;
 }
@@ -468,87 +563,96 @@ td {
 th {
   background: #edf2f6;
   color: var(--navy-dark);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 td {
   font-size: 0.93rem;
 }
 
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: rgba(45, 120, 184, 0.03);
+}
+
 .empty-row {
   text-align: center;
   color: var(--muted);
-  padding: 24px;
+  padding: 30px;
+  font-style: italic;
 }
 
 /* -------------------------------------------------------------
-   13. ESTADOS DE TURNOS
-------------------------------------------------------------- */
+   12. BADGES Y ESTADOS
+   ------------------------------------------------------------- */
 .badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   border-radius: 999px;
-  padding: 4px 9px;
+  padding: 4px 10px;
   font-size: 0.78rem;
+  font-weight: 700;
   background: #edf2f6;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .badge.confirmado {
-  background: #e7f5ec;
-  color: #24623b;
+  background: var(--success-bg);
+  color: var(--success);
 }
 
 .badge.pendiente {
-  background: #fff3d7;
-  color: #7a5a18;
+  background: var(--warning-bg);
+  color: var(--warning-text);
 }
 
 .badge.cancelado {
-  background: #fdebea;
-  color: #8d2922;
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 /* -------------------------------------------------------------
-   14. AGENDA MÉDICA
-------------------------------------------------------------- */
+   13. AGENDA MÉDICA
+   ------------------------------------------------------------- */
 .agenda-grid {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
-/*
-  Cada franja tiene tres columnas:
-  hora | detalle | estado
-*/
 .agenda-slot {
   display: grid;
   grid-template-columns: 90px 1fr auto;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
-  padding: 12px;
+  padding: 14px 18px;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radius);
+  transition: var(--transition);
 }
 
 .agenda-slot.free {
   background: #f8fbfd;
+  border-left: 4px solid var(--blue);
 }
 
 .agenda-slot.busy {
   background: var(--warning-bg);
+  border-left: 4px solid #d4a017;
 }
 
 .slot-state {
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
-/* -------------------------------------------------------------
-   15. ACCESIBILIDAD
-   -------------------------------------------------------------
-   sr-only oculta visualmente un elemento sin quitarlo del documento.
-   Es útil para labels que deben seguir disponibles para lectores de
-   pantalla.
-------------------------------------------------------------- */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -562,68 +666,113 @@ td {
 }
 
 /* =============================================================
-   16. RESPONSIVE - TABLETS Y PANTALLAS MEDIANAS
-   -------------------------------------------------------------
-   Cuando el ancho es menor o igual a 800px se reorganiza el diseño.
+   14. RESPONSIVE - TABLETS Y TELÉFONOS (MENÚ Y LAYOUT)
    ============================================================= */
-@media (max-width: 800px) {
+@media (max-width: 768px) {
 
-  /* El menú deja de estar a la izquierda y pasa arriba. */
-  .app-layout {
-    grid-template-columns: 1fr;
+  /* Muestra el botón del menú en la barra superior */
+  .mobile-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
+  .app-layout {
+    grid-template-columns: 1fr;
+    display: block;
+  }
+
+  /*
+    El menú sidebar en móvil funciona como un panel desplegable
+    con altura constante fijada exactamente a calc(100vh - topbar).
+    El botón de cerrar sesión queda siempre abajo del panel.
+  */
   .sidebar {
-    position: sticky;
-    top: 0;
-    z-index: 3;
-    flex-direction: row;
-    overflow-x: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-    padding: 0;
+    position: fixed;
+    top: var(--topbar-height);
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100vh - var(--topbar-height));
+    z-index: 999;
+    background: #e9eef2;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0 20px;
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.25s ease-in-out, opacity 0.25s ease-in-out, visibility 0.25s;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border-right: none;
+    border-bottom: 2px solid var(--line);
+  }
+
+  .app-layout.menu-open .sidebar,
+  .sidebar.open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
   }
 
   .sidebar a,
   .nav-button {
-    white-space: nowrap;
-    padding: 12px 14px;
+    padding: 16px 24px;
+    font-size: 1.05rem;
+    border-left: none;
+    border-bottom: 1px solid var(--line);
   }
 
   .nav-button {
-    width: auto;
-    margin-top: 0;
-    margin-left: auto;
+    margin-top: auto;
+    border-top: 2px solid var(--line);
+    border-bottom: none;
+    background: var(--white);
   }
 
   .content {
-    padding: 20px 14px;
+    padding: 20px 16px;
   }
 
-  /* Los indicadores se apilan verticalmente. */
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
   }
 
   .page-title-row,
   .section-title {
-    align-items: flex-start;
     flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
   }
 
-  /* Formularios y filtros pasan de dos columnas a una. */
+  .page-title-row .btn,
+  .section-title .btn {
+    width: 100%;
+  }
+
   .grid-form,
   .filters-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .span-2 {
     grid-column: span 1;
   }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
 }
 
 /* =============================================================
-   17. RESPONSIVE - TELÉFONOS
+   15. RESPONSIVE - PANTALLAS PEQUEÑAS (TELÉFONOS < 520px)
    ============================================================= */
 @media (max-width: 520px) {
 
@@ -631,21 +780,158 @@ td {
     padding: 0 14px;
   }
 
-  /* Se oculta el nombre de la pantalla para ganar espacio. */
+  .brand {
+    font-size: 1rem;
+  }
+
   .screen-code {
     display: none;
   }
 
-  .form-card {
-    padding: 20px;
+  .content {
+    padding: 16px 12px;
   }
 
-  /* Agenda más compacta en teléfonos. */
+  .form-card,
+  .panel-card {
+    padding: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
   .agenda-slot {
-    grid-template-columns: 70px 1fr;
+    grid-template-columns: 75px 1fr;
+    gap: 8px 12px;
+    padding: 12px;
   }
 
   .slot-state {
-    grid-column: 2;
+    grid-column: 1 / -1;
+    justify-self: flex-start;
+    margin-top: 2px;
   }
 }
+
+/* =============================================================
+   16. NOTIFICACIONES FLOTANTES (TOASTS)
+   ============================================================= */
+.toast-container {
+  position: fixed;
+  top: calc(var(--topbar-height) + 16px);
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 380px;
+  width: calc(100% - 40px);
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 14px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 5px solid var(--blue);
+  animation: toastSlideIn 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.toast.hide {
+  opacity: 0;
+  transform: translateX(120%);
+}
+
+.toast.ok {
+  border-left-color: var(--success);
+  background: #f2f9f4;
+  color: #1b532d;
+}
+
+.toast.bad {
+  border-left-color: var(--danger);
+  background: #fdf3f3;
+  color: #821c15;
+}
+
+.toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.toast.ok .toast-icon {
+  background: var(--success);
+  color: var(--white);
+}
+
+.toast.bad .toast-icon {
+  background: var(--danger);
+  color: var(--white);
+}
+
+.toast.info .toast-icon {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.toast-text {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.toast-close:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 520px) {
+  .toast-container {
+    top: calc(var(--topbar-height) + 10px);
+    right: 12px;
+    left: 12px;
+    max-width: none;
+    width: auto;
+  }
+}
