@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Panel principal</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Barra superior utilizada en las pantallas privadas. -->
+  <header class="topbar">
+    <div class="brand">SALUD TURNOS</div>
+    <span class="screen-code">Panel principal</span>
+  </header>
+
+  <!--
+    app-layout contiene dos áreas:
+    - sidebar: menú de navegación.
+    - content: contenido principal.
+    CSS Grid se encarga de distribuir ambas columnas.
+  -->
+  <div class="app-layout">
+
+    <!-- Menú principal del sistema. -->
+    <nav class="sidebar" aria-label="Navegación principal">
+      <a class="active" href="dashboard.html">Panel</a>
+      <a href="pacientes.html">Pacientes</a>
+      <a href="turno.html">Turnos</a>
+      <a href="agenda.html">Agenda</a>
+
+      <!-- common.js escucha el click de este botón y cierra la sesión. -->
+      <button class="nav-button" id="logoutBtn">Cerrar sesión</button>
+    </nav>
+
+    <main class="content">
+      <div class="page-title-row">
+        <div>
+          <h1>Panel principal</h1>
+          <p class="muted">Resumen de la actividad registrada.</p>
+        </div>
+      </div>
+
+      <!--
+        Indicadores del Dashboard.
+        Los valores comienzan en 0 y dashboard.js los actualiza dinámicamente.
+      -->
+      <section class="stats-grid" aria-label="Indicadores">
+        <article class="stat-card">
+          <span>Turnos registrados</span>
+          <strong id="totalTurnos">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Confirmados</span>
+          <strong id="confirmados">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Cancelados</span>
+          <strong id="cancelados">0</strong>
+        </article>
+      </section>
+
+      <!-- Tabla de próximos turnos. -->
+      <section class="panel-card">
+        <div class="section-title">
+          <h2>Próximos turnos</h2>
+          <a class="btn btn-secondary" href="turno.html">Nuevo turno</a>
+        </div>
+
+        <!-- table-wrap agrega desplazamiento horizontal en pantallas pequeñas. -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Paciente</th>
+                <th>Profesional</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+
+            <!-- dashboard.js genera las filas dentro de este tbody. -->
+            <tbody id="dashboardTurnos"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!--
+    data.js   -> datos simulados y localStorage.
+    common.js -> control de sesión y funciones compartidas.
+    dashboard.js -> lógica propia de esta pantalla.
+  -->
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

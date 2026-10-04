@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Iniciar sesión</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado de la pantalla de autenticación. -->
+  <header class="topbar public-topbar">
+    <div class="brand">SALUD TURNOS</div>
+    <span class="screen-code">Inicio de sesión</span>
+  </header>
+
+  <!--
+    center-page centra el formulario horizontal y verticalmente.
+    La etiqueta <main> representa el contenido principal de la pantalla.
+  -->
+  <main class="center-page">
+    <section class="form-card login-card">
+      <h1>Inicio de sesión</h1>
+      <p class="muted">Ingrese sus credenciales para acceder al sistema.</p>
+
+      <!--
+        novalidate desactiva los mensajes automáticos del navegador.
+        De esta manera las validaciones y mensajes son controlados con JavaScript.
+      -->
+      <form id="loginForm" novalidate>
+
+        <!-- Campo de correo electrónico. -->
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="usuario@correo.com"
+            required
+          >
+
+          <!-- JavaScript escribe aquí el mensaje de error correspondiente. -->
+          <small class="error" id="emailError"></small>
+        </div>
+
+        <!-- Campo de contraseña. -->
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Contraseña"
+            required
+          >
+          <small class="error" id="passwordError"></small>
+        </div>
+
+        <!-- Al enviar el formulario se ejecuta el evento submit definido en login.js. -->
+        <button class="btn btn-primary full" type="submit">Ingresar</button>
+
+        <!-- aria-live permite que lectores de pantalla anuncien cambios del mensaje. -->
+        <p id="loginMessage" class="form-message" aria-live="polite"></p>
+      </form>
+
+      <!-- Credenciales simuladas para facilitar la demostración académica. -->
+      <div class="demo-box">
+        <strong>Usuario de prueba</strong>
+        <span>admin@saludturnos.com / 1234</span>
+      </div>
+    </section>
+  </main>
+
+  <!--
+    Orden de carga de los scripts:
+    1) data.js crea AppData y los datos simulados.
+    2) login.js utiliza AppData para validar las credenciales.
+  -->
+  <script src="js/data.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

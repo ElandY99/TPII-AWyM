@@ -1,0 +1,10 @@
+{
+  "descripcion": "Archivo de ejemplo con datos simulados para el TP2. La aplicación utiliza localStorage para facilitar la ejecución sin servidor.",
+  "pacientes": [
+    {"id": 1, "dni": "30111222", "nombre": "Ana", "apellido": "López"},
+    {"id": 2, "dni": "28777444", "nombre": "Luis", "apellido": "Díaz"}
+  ],
+  "turnos": [
+    {"id": 1, "paciente": "Ana López", "profesional": "Dra. Laura Gómez", "fecha": "2026-10-06", "hora": "09:00", "estado": "Confirmado"}
+  ]
+}

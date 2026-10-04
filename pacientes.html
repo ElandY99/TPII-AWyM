@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Pacientes</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado de la pantalla. -->
+  <header class="topbar">
+    <div class="brand">SALUD TURNOS</div>
+    <span class="screen-code">Gestión de pacientes</span>
+  </header>
+
+  <div class="app-layout">
+
+    <!-- Navegación principal. -->
+    <nav class="sidebar" aria-label="Navegación principal">
+      <a href="dashboard.html">Panel</a>
+      <a class="active" href="pacientes.html">Pacientes</a>
+      <a href="turno.html">Turnos</a>
+      <a href="agenda.html">Agenda</a>
+      <button class="nav-button" id="logoutBtn">Cerrar sesión</button>
+    </nav>
+
+    <main class="content">
+
+      <!-- Título y acción principal de la pantalla. -->
+      <div class="page-title-row">
+        <div>
+          <h1>Gestión de pacientes</h1>
+          <p class="muted">Alta, búsqueda y consulta de pacientes.</p>
+        </div>
+
+        <!-- pacientes.js muestra el formulario cuando se presiona este botón. -->
+        <button class="btn btn-primary" id="toggleFormBtn">Nuevo paciente</button>
+      </div>
+
+      <!--
+        Formulario de alta de paciente.
+        Comienza oculto mediante la clase hidden.
+      -->
+      <section class="panel-card hidden" id="patientFormCard">
+        <h2>Registrar paciente</h2>
+
+        <form id="patientForm" class="grid-form" novalidate>
+
+          <div class="field">
+            <label for="dni">DNI *</label>
+            <input id="dni" maxlength="15" required>
+            <small class="error" id="dniError"></small>
+          </div>
+
+          <div class="field">
+            <label for="nombre">Nombre *</label>
+            <input id="nombre" maxlength="50" required>
+            <small class="error" id="nombreError"></small>
+          </div>
+
+          <div class="field">
+            <label for="apellido">Apellido *</label>
+            <input id="apellido" maxlength="50" required>
+            <small class="error" id="apellidoError"></small>
+          </div>
+
+          <div class="field">
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" maxlength="20">
+          </div>
+
+          <!-- span-2 hace que el campo ocupe las dos columnas del formulario. -->
+          <div class="field span-2">
+            <label for="correo">Correo</label>
+            <input id="correo" type="email" maxlength="100">
+            <small class="error" id="correoError"></small>
+          </div>
+
+          <div class="form-actions span-2">
+            <button type="button" class="btn btn-light" id="cancelPatientBtn">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+
+          <!-- Mensaje general de resultado del formulario. -->
+          <p id="patientMessage" class="form-message span-2" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <!-- Sección de búsqueda y listado de pacientes. -->
+      <section class="panel-card">
+        <div class="filter-row">
+          <!--
+            sr-only oculta visualmente el label, pero lo mantiene para accesibilidad.
+          -->
+          <label class="sr-only" for="patientSearch">Buscar pacientes</label>
+          <input id="patientSearch" placeholder="Buscar por DNI, nombre o apellido...">
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>DNI</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+
+            <!-- pacientes.js completa dinámicamente las filas. -->
+            <tbody id="patientsTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/pacientes.js"></script>
+</body>
+</html>
