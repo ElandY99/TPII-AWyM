@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Panel principal</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Barra superior utilizada en las pantallas privadas -->
+  <header class="topbar">
+    <div class="topbar-brand-wrap">
+      <div class="brand">SALUD TURNOS</div>
+      <span class="screen-code">Panel principal</span>
+    </div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú de navegación">☰</button>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar generado dinámicamente por common.js -->
+    <nav class="sidebar" aria-label="Navegación principal"></nav>
+
+    <main class="content">
+      <div class="page-title-row">
+        <div>
+          <h1 id="dashTitle">Panel principal</h1>
+          <p class="muted" id="dashSubtitle">Resumen de actividad e indicadores de atención médica.</p>
+          <span class="muted" id="dashboardWindowNotice" style="font-size: 0.84rem; display: block; margin-top: 4px;">
+            Cargando período...
+          </span>
+        </div>
+      </div>
+
+      <!-- Indicadores principales destacados (TP2) -->
+      <section class="stats-grid" aria-label="Indicadores principales" style="margin-bottom: 12px;">
+        <article class="stat-card">
+          <span>Turnos en ventana (30 días)</span>
+          <strong id="totalTurnos">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Confirmados</span>
+          <strong id="confirmados">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Cancelados</span>
+          <strong id="cancelados">0</strong>
+        </article>
+      </section>
+
+      <!-- Fila secundaria de estados de turno (DUDA-11) -->
+      <section class="stats-grid-secondary" aria-label="Métricas de estado complementarias" style="margin-bottom: 24px;">
+        <article class="stat-card-sm">
+          <span>Pendientes</span>
+          <strong id="pendientes">0</strong>
+        </article>
+        <article class="stat-card-sm">
+          <span>En Consultorio</span>
+          <strong id="enConsultorio">0</strong>
+        </article>
+        <article class="stat-card-sm">
+          <span>Asistidos</span>
+          <strong id="asistidos">0</strong>
+        </article>
+        <article class="stat-card-sm">
+          <span>Ausentes</span>
+          <strong id="ausentes">0</strong>
+        </article>
+      </section>
+
+      <!-- Tabla de próximos turnos -->
+      <section class="panel-card">
+        <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2>Próximos turnos a atender</h2>
+          <a class="btn btn-secondary" id="newTurnBtnDashboard" href="turno.html">+ Nuevo turno</a>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Paciente</th>
+                <th>Profesional</th>
+                <th>Consultorio</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardTurnos">
+              <tr><td colspan="6" class="empty-row">Cargando próximos turnos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

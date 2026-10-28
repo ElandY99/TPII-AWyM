@@ -1,0 +1,10 @@
+node_modules
+node_modules/
+backend/data/*.db
+backend/data/*.db-wal
+backend/data/*.db-shm
+Info_del_proyecto
+.DS_Store
+*.log
+*.md
+*.txt

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Agenda Médica</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado de la Agenda Médica -->
+  <header class="topbar">
+    <div class="topbar-brand-wrap">
+      <div class="brand">SALUD TURNOS</div>
+      <span class="screen-code">Agenda médica</span>
+    </div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú de navegación">☰</button>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar generado dinámicamente por common.js -->
+    <nav class="sidebar" aria-label="Navegación principal"></nav>
+
+    <main class="content">
+      <div class="page-title-row">
+        <div>
+          <h1 id="agendaPageTitle">Agenda médica</h1>
+          <p class="muted">Cronograma de horarios libres y turnos de atención asignados.</p>
+        </div>
+
+        <!-- Selector de Modo: Diaria vs Mensual (DUDA-12a) -->
+        <div class="pill-group" role="group" aria-label="Modo de agenda">
+          <button type="button" class="pill-btn active" id="btnModeDaily" data-mode="daily">Vista diaria</button>
+          <button type="button" class="pill-btn" id="btnModeMonthly" data-mode="monthly">Vista mensual</button>
+        </div>
+      </div>
+
+      <!-- Filtros utilizados para la agenda -->
+      <section class="panel-card" style="margin-bottom: 24px;">
+        <div class="filters-grid">
+          <div class="field">
+            <label for="agendaDate" id="agendaDateLabel">Fecha de atención</label>
+            <input type="date" id="agendaDate">
+          </div>
+
+          <div class="field" id="agendaSpecialtyField">
+            <label for="agendaSpecialty">Especialidad médica</label>
+            <select id="agendaSpecialty">
+              <option value="">Todas las especialidades</option>
+            </select>
+          </div>
+
+          <div class="field" id="agendaDoctorField">
+            <label for="agendaDoctor">Profesional médico</label>
+            <select id="agendaDoctor">
+              <option value="">Todos los profesionales</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contenedor dinámico de la agenda médica -->
+      <section class="panel-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 id="agendaGridTitle">Disponibilidad y turnos</h2>
+          <button type="button" class="btn btn-light btn-xs" id="refreshAgendaBtn">🔄 Actualizar</button>
+        </div>
+        <div id="agendaGrid" class="agenda-grid">
+          <p class="muted" style="text-align: center; padding: 24px 0;">Cargando agenda médica...</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/agenda.js"></script>
+</body>
+</html>

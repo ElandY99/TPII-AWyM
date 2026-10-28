@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Usuarios</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado de la pantalla -->
+  <header class="topbar">
+    <div class="topbar-brand-wrap">
+      <div class="brand">SALUD TURNOS</div>
+      <span class="screen-code">Administración de usuarios</span>
+    </div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú de navegación">☰</button>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar generado dinámicamente por common.js -->
+    <nav class="sidebar" aria-label="Navegación principal"></nav>
+
+    <main class="content">
+
+      <div class="page-title-row">
+        <div>
+          <h1>Gestión de usuarios</h1>
+          <p class="muted">Altas atómicas, reseteo de claves y control de acceso.</p>
+        </div>
+        <button class="btn btn-primary" id="newUserBtn">+ Nuevo usuario</button>
+      </div>
+
+      <!-- Filtros y Listado -->
+      <section class="panel-card">
+        <div class="filters-grid" style="margin-bottom: 18px;">
+          <div class="field">
+            <label for="userSearch">Buscar por nombre o apellido</label>
+            <input id="userSearch" placeholder="Nombre o apellido...">
+          </div>
+
+          <div class="field">
+            <label for="userEmailSearch">Buscar por correo electrónico</label>
+            <input id="userEmailSearch" placeholder="usuario@saludturnos.com">
+          </div>
+
+          <div class="field">
+            <label for="userRoleFilter">Rol</label>
+            <select id="userRoleFilter">
+              <option value="">Todos los roles</option>
+              <option value="ADMINISTRADOR">Administrador</option>
+              <option value="RECEPCIONISTA">Recepcionista</option>
+              <option value="PROFESIONAL">Profesional</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Estado</label>
+            <div class="pill-group" role="group" aria-label="Filtro de estado">
+              <button type="button" class="pill-btn active" data-estado="1">Activos</button>
+              <button type="button" class="pill-btn" data-estado="0">Inactivos</button>
+              <button type="button" class="pill-btn" data-estado="todos">Todos</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 60px;">ID</th>
+                <th>Nombre y Apellido</th>
+                <th>Correo electrónico</th>
+                <th style="width: 130px;">Rol</th>
+                <th style="width: 100px;">Estado</th>
+                <th>Alta</th>
+                <th style="min-width: 190px;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable">
+              <tr><td colspan="7" class="empty-row">Cargando usuarios...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/usuarios.js"></script>
+</body>
+</html>

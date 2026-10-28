@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Profesionales</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado de la pantalla -->
+  <header class="topbar">
+    <div class="topbar-brand-wrap">
+      <div class="brand">SALUD TURNOS</div>
+      <span class="screen-code">Gestión de profesionales</span>
+    </div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú de navegación">☰</button>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar generado dinámicamente por common.js -->
+    <nav class="sidebar" aria-label="Navegación principal"></nav>
+
+    <main class="content">
+
+      <div class="page-title-row">
+        <div>
+          <h1>Profesionales médicos</h1>
+          <p class="muted">Gestión de cuerpo médico, consultorios y disponibilidad semanal.</p>
+        </div>
+        <!-- Nota informativa: el alta de profesional se hace desde Usuarios para mantener la atomicidad -->
+        <span id="createDocHelp" class="muted" style="font-size: 0.88rem;">
+          Para dar de alta un nuevo médico, hágalo desde <a href="usuarios.html" style="color: var(--blue); text-decoration: underline; font-weight: 600;">Usuarios</a>.
+        </span>
+      </div>
+
+      <!-- Filtros y Listado -->
+      <section class="panel-card">
+        <div class="filters-grid" style="margin-bottom: 18px;">
+          <div class="field">
+            <label for="docSearch">Buscar por nombre o apellido</label>
+            <input id="docSearch" placeholder="Dr. Pérez, Laura Gómez...">
+          </div>
+
+          <div class="field">
+            <label for="docSpecialtySearch">Buscar por especialidad</label>
+            <input id="docSpecialtySearch" placeholder="Pediatría, Cardiología...">
+          </div>
+
+          <div class="field span-2">
+            <label>Estado</label>
+            <div class="pill-group" role="group" aria-label="Filtro de estado de profesionales">
+              <button type="button" class="pill-btn active" data-estado="1">Activos</button>
+              <button type="button" class="pill-btn" data-estado="0">Inactivos</button>
+              <button type="button" class="pill-btn" data-estado="todos">Todos</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Profesional</th>
+                <th>Especialidad</th>
+                <th>Matrícula</th>
+                <th>Consultorio</th>
+                <th>Usuario vinculado</th>
+                <th>Estado</th>
+                <th id="docActionsHeader" style="min-width: 220px;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="doctorsTable">
+              <tr><td colspan="7" class="empty-row">Cargando profesionales...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/profesionales.js"></script>
+</body>
+</html>

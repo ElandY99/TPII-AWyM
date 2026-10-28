@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:3000/api/
+
+### Verificación inicial
+GET {{baseUrl}}health
+
+### Autenticación como administrador
+POST {{baseUrl}}auth/login
+Content-Type: application/json
+
+{
+  "clave": "SaludTurnos#2026",
+  "correo": "admin@saludturnos.com"
+}
+
+### Autenticación como recepcionista
+POST {{baseUrl}}auth/login
+Content-Type: application/json
+
+{
+  "clave": "Recepcion#2026",
+  "correo": "recepcion@saludturnos.com"
+}
+
+### Autenticación como profesional /* "GomezLaura#2026",*/
+POST {{baseUrl}}auth/login
+Content-Type: application/json
+
+{
+  "clave": "GomezLaura#2026", 
+  "correo": "laura.gomez@saludturnos.com"
+}
+
+### Cierre de sesión
+POST {{baseUrl}}auth/logout
+
+### Obtener mi información
+GET {{baseUrl}}auth/me
+
+### Cambio de contraseña
+PUT {{baseUrl}}auth/clave
+Content-Type: application/json
+
+{
+  "clave_actual": "LauraGomez#2026",
+  "clave_nueva": "GomezLaura#2026"
+}

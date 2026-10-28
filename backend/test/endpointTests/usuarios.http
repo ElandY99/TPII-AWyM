@@ -1,0 +1,24 @@
+@baseUrl = http://localhost:3000/api/usuarios/
+
+
+### Obtener todos los usuarios
+GET {{baseUrl}}
+# Solo anda con el rol de ADMINISTRADOR
+
+
+### Obtener usuario por ID
+GET {{baseUrl}}3
+# Solo anda con el rol de ADMINISTRADOR
+
+
+### Obtener todos los usuarios
+POST {{baseUrl}}
+# Solo anda con el rol de ADMINISTRADOR
+Content-Type: application/json
+
+{
+  "nombre": "Lucas",
+  "apellido": "Rodoni",
+  "correo": "lrodoni@saludturnos.com",
+  "rol": "RECEPCIONISTA"
+}

@@ -1,0 +1,33 @@
+@baseUrl = http://localhost:3000/api/especialidades/
+
+### Obtener todas las especialidades
+GET {{baseUrl}}
+# Solo anda con los roles de
+# ADMINISTRADOR y RECEPCIONISTA
+
+### Obtener una especialidad por ID
+GET {{baseUrl}}4
+
+### Crear nueva especialidad
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombre": "Nutrición",
+  "descripcion": "Consulta especializada para una buena alimentación"
+}
+
+### Modificar una especialidad
+PUT {{baseUrl}}4
+Content-Type: application/json
+
+{
+  "nombre": "Nutrición",
+  "descripcion": "Consulta sobre alimentación sana"
+}
+
+### Desactivar una especialidad
+DELETE {{baseUrl}}4
+
+### Activar una especialidad
+PATCH {{baseUrl}}4/activar

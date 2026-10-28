@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Turnos Médicos</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado de la pantalla de turnos -->
+  <header class="topbar">
+    <div class="topbar-brand-wrap">
+      <div class="brand">SALUD TURNOS</div>
+      <span class="screen-code" id="screenCodeTitle">Gestión de turnos médicos</span>
+    </div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú de navegación">☰</button>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar generado dinámicamente por common.js -->
+    <nav class="sidebar" aria-label="Navegación principal"></nav>
+
+    <main class="content">
+      <div class="page-title-row">
+        <div>
+          <h1 id="pageTitle">Turnos médicos</h1>
+          <p class="muted" id="pageSubtitle">Solicitud, consulta y transiciones del ciclo de atención.</p>
+        </div>
+        <!-- Solo visible para ADMIN y RECEPCIONISTA (DUDA-05) -->
+        <button class="btn btn-primary" id="toggleNewTurnBtn">+ Nuevo turno</button>
+      </div>
+
+      <!-- Panel colapsable de solicitud de nuevo turno (ADMIN y RECEP) -->
+      <section class="panel-card hidden" id="turnFormCard" style="margin-bottom: 24px;">
+        <h2>Solicitud de nuevo turno</h2>
+        <p class="muted" style="margin-bottom: 16px;">Seleccione paciente, médico y verifique la disponibilidad de horarios libres.</p>
+
+        <form id="turnForm" class="grid-form" novalidate>
+          <!-- Selector de Paciente con Búsqueda en tiempo real (FE-TUR-01 / DUDA-20) -->
+          <div class="field span-2">
+            <label for="patientSearchInput">Paciente * (escriba DNI, nombre o apellido)</label>
+            <div class="combobox-wrap">
+              <input type="text" id="patientSearchInput" placeholder="Buscar paciente por DNI o nombre..." autocomplete="off" required>
+              <input type="hidden" id="patientSelect" name="id_paciente" required>
+              <div id="patientDropdown" class="autocomplete-dropdown hidden"></div>
+            </div>
+            <small class="error" id="id_pacienteError"></small>
+          </div>
+
+          <!-- Especialidad -->
+          <div class="field">
+            <label for="specialtySelect">Especialidad médica *</label>
+            <select id="specialtySelect" required>
+              <option value="">Seleccione especialidad...</option>
+            </select>
+            <small class="error" id="specialtySelectError"></small>
+          </div>
+
+          <!-- Profesional (filtrado por especialidad) -->
+          <div class="field">
+            <label for="doctorSelect">Profesional médico *</label>
+            <select id="doctorSelect" required disabled>
+              <option value="">Primero elija una especialidad</option>
+            </select>
+            <small class="error" id="id_profesionalError"></small>
+          </div>
+
+          <!-- Fecha del turno -->
+          <div class="field">
+            <label for="turnDate">Fecha de atención *</label>
+            <input type="date" id="turnDate" required>
+            <small class="error" id="fechaError"></small>
+          </div>
+
+          <!-- Horarios disponibles calculados por API -->
+          <div class="field">
+            <label for="turnTime">Horario disponible *</label>
+            <select id="turnTime" required disabled>
+              <option value="">Seleccione médico y fecha</option>
+            </select>
+            <small class="error" id="horaError"></small>
+          </div>
+
+          <!-- Motivo de consulta -->
+          <div class="field span-2">
+            <label for="motivo">Motivo de consulta (opcional)</label>
+            <textarea id="motivo" rows="2" maxlength="255" placeholder="Control de rutina, chequeo, derivación..."></textarea>
+            <small class="error" id="motivo_consultaError"></small>
+          </div>
+
+          <div class="form-actions span-2">
+            <button type="button" class="btn btn-light" id="cancelTurnBtn">Cancelar</button>
+            <button type="submit" class="btn btn-primary" id="submitTurnBtn">Confirmar asignación</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Listado de turnos con filtros completos y paginación -->
+      <section class="panel-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <h2>Listado de turnos</h2>
+          <button type="button" class="btn btn-light btn-xs" id="refreshTurnsBtn" title="Refrescar lista">
+            🔄 Actualizar
+          </button>
+        </div>
+
+        <!-- Filtros (FE-TUR-10 / DUDA-08) -->
+        <div class="filters-grid" style="margin-bottom: 16px;">
+          <div class="field">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label for="filterDate">Fecha</label>
+              <label style="font-weight: normal; font-size: 0.82rem; cursor: pointer;">
+                <input type="checkbox" id="filterAllDates" style="width: auto; vertical-align: middle; margin-right: 4px;"> Ver todos
+              </label>
+            </div>
+            <input type="date" id="filterDate">
+          </div>
+
+          <div class="field">
+            <label for="filterStatus">Estado</label>
+            <select id="filterStatus">
+              <option value="todos">Todos los estados</option>
+              <option value="PENDIENTE">Pendiente</option>
+              <option value="CONFIRMADO">Confirmado</option>
+              <option value="EN_CONSULTORIO">En Consultorio</option>
+              <option value="ASISTIDO">Asistido</option>
+              <option value="AUSENTE">Ausente</option>
+              <option value="CANCELADO">Cancelado</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="filterPatient">Buscar paciente</label>
+            <input id="filterPatient" placeholder="DNI o nombre...">
+          </div>
+
+          <!-- Oculto para PROFESIONAL -->
+          <div class="field" id="filterDoctorField">
+            <label for="filterDoctor">Buscar profesional</label>
+            <input id="filterDoctor" placeholder="Nombre del médico...">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Paciente</th>
+                <th>Profesional</th>
+                <th>Especialidad</th>
+                <th>Consultorio</th>
+                <th>Motivo</th>
+                <th>Estado</th>
+                <th style="min-width: 170px;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="turnsTable">
+              <tr><td colspan="9" class="empty-row">Cargando turnos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación (DUDA-08: 20 filas por página) -->
+        <div class="pagination" id="turnsPagination">
+          <span id="paginationInfo">Mostrando 0 - 0 de 0 turnos</span>
+          <div class="pagination-controls">
+            <button type="button" class="btn btn-light btn-xs" id="prevPageBtn" disabled>◀ Anterior</button>
+            <button type="button" class="btn btn-light btn-xs" id="nextPageBtn" disabled>Siguiente ▶</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/turnos.js"></script>
+</body>
+</html>

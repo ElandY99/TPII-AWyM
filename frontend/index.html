@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+
+  <!--
+    viewport permite que el diseño se adapte correctamente a celulares y tablets.
+    Es una de las bases del diseño responsive solicitado en la actividad.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Salud Turnos - Inicio</title>
+
+  <!-- Hoja de estilos general utilizada por todas las pantallas del sistema. -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<!--
+  home-body agrega un comportamiento específico para la página pública de inicio.
+  En CSS se utiliza para distribuir header, contenido y footer verticalmente.
+-->
+
+<body class="home-body">
+
+  <!-- Encabezado público del sistema. -->
+  <header class="topbar public-topbar">
+    <div class="topbar-brand-wrap">
+      <div class="brand">SALUD TURNOS</div>
+      <span class="screen-code">Inicio</span>
+    </div>
+  </header>
+
+  <!-- Contenido principal de la página de inicio. -->
+  <main class="hero">
+    <section class="hero-card">
+      <h1>Gestión simple y segura<br>de turnos médicos</h1>
+      <p>Consulte disponibilidad y gestione su atención.</p>
+
+      <!--
+        La navegación hacia Login o Panel si ya está autenticado (FE-INI-01).
+      -->
+      <a class="btn btn-primary" id="homeCtaBtn" href="login.html">Iniciar sesión</a>
+    </section>
+  </main>
+
+  <!-- Pie de página informativo. -->
+  <footer class="footer">
+    <p>Aplicaciones Web y Móvil - Trabajo Práctico 3</p>
+    <p>Elpeza Andrés - 600213 | Benitez José - 600199 | Susñar Daniel - 600081</p>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script>
+    (async function () {
+      try {
+        const res = await window.Api.auth.me();
+        if (res && res.usuario) {
+          const btn = document.getElementById('homeCtaBtn');
+          if (btn) {
+            btn.textContent = 'Ir al panel';
+            btn.href = 'dashboard.html';
+          }
+        }
+      } catch {
+        // No hay sesión activa, mantiene Iniciar sesión
+      }
+    })();
+  </script>
+</body>
+
+</html>

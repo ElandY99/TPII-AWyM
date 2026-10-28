@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salud Turnos - Mi cuenta</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado de la pantalla -->
+  <header class="topbar">
+    <div class="topbar-brand-wrap">
+      <div class="brand">SALUD TURNOS</div>
+      <span class="screen-code">Mi cuenta</span>
+    </div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú de navegación">☰</button>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar generado dinámicamente por common.js -->
+    <nav class="sidebar" aria-label="Navegación principal"></nav>
+
+    <main class="content">
+      <div class="page-title-row">
+        <div>
+          <h1>Mi cuenta</h1>
+          <p class="muted">Información personal, datos profesionales y seguridad.</p>
+        </div>
+      </div>
+
+      <!-- Tarjeta 1: Información del perfil -->
+      <section class="panel-card" style="margin-bottom: 24px;">
+        <h2>Información del perfil</h2>
+        <div id="profileLoading" style="color: var(--muted); padding: 12px 0;">Cargando información...</div>
+        <div id="profileContent" class="hidden">
+          <div class="grid-form" style="margin-bottom: 16px;">
+            <div class="field">
+              <label>Nombre y Apellido</label>
+              <div id="userName" style="font-weight: 600; padding: 8px 0;">-</div>
+            </div>
+            <div class="field">
+              <label>Correo electrónico</label>
+              <div id="userEmail" style="padding: 8px 0;">-</div>
+            </div>
+            <div class="field">
+              <label>Rol en el sistema</label>
+              <div id="userRole" style="padding: 8px 0;">-</div>
+            </div>
+          </div>
+
+          <!-- Bloque adicional para Profesionales Médicos -->
+          <div id="doctorProfileBlock" class="hidden" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line);">
+            <h3>Datos Profesionales</h3>
+            <div class="grid-form" style="margin-top: 12px;">
+              <div class="field">
+                <label>Especialidad</label>
+                <div id="doctorSpecialty" style="font-weight: 600; padding: 6px 0;">-</div>
+              </div>
+              <div class="field">
+                <label>Matrícula</label>
+                <div id="doctorLicense" style="padding: 6px 0;">-</div>
+              </div>
+              <div class="field">
+                <label>Consultorio asignado</label>
+                <div id="doctorOffice" style="padding: 6px 0;">-</div>
+              </div>
+            </div>
+
+            <!-- Horarios semanales de atención (A8) -->
+            <div style="margin-top: 20px;">
+              <h4>Disponibilidad semanal de atención</h4>
+              <p class="muted" style="font-size: 0.88rem; margin: 4px 0 12px;">Horarios configurados en su agenda médica.</p>
+              <div class="table-wrap" style="max-width: 650px;">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Día de la semana</th>
+                      <th>Horario de atención</th>
+                    </tr>
+                  </thead>
+                  <tbody id="doctorAvailabilityTable">
+                    <tr><td colspan="2" class="empty-row">Cargando disponibilidad...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tarjeta 2: Cambio de Contraseña -->
+      <section class="panel-card" style="max-width: 650px;">
+        <h2>Cambiar contraseña</h2>
+        <p class="muted" style="margin-bottom: 16px;">
+          La nueva contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y al menos un carácter especial (<code># $ @ ! % * ? &</code>).
+        </p>
+
+        <form id="changePasswordForm" class="grid-form" novalidate>
+          <div class="field span-2">
+            <label for="clave_actual">Contraseña actual *</label>
+            <input type="password" id="clave_actual" name="clave_actual" autocomplete="current-password" required>
+            <small class="error" id="clave_actualError"></small>
+          </div>
+
+          <div class="field">
+            <label for="clave_nueva">Nueva contraseña *</label>
+            <input type="password" id="clave_nueva" name="clave_nueva" autocomplete="new-password" required>
+            <small class="error" id="clave_nuevaError"></small>
+          </div>
+
+          <div class="field">
+            <label for="clave_confirm">Confirmar nueva contraseña *</label>
+            <input type="password" id="clave_confirm" name="clave_confirm" autocomplete="new-password" required>
+            <small class="error" id="clave_confirmError"></small>
+          </div>
+
+          <div class="form-actions span-2">
+            <button type="submit" class="btn btn-primary" id="savePasswordBtn">Actualizar contraseña</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/cuenta.js"></script>
+</body>
+</html>
