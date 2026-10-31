@@ -18,6 +18,12 @@
   const passwordInput = document.getElementById('password');
   const submitBtn = document.getElementById('loginSubmitBtn');
 
+  /* Iconos del toggle de contraseña */
+  const PASSWORD_ICON = {
+    hidden: '/images/eye-key-look-password-security-see-svgrepo-com.svg', // contraseña OCULTA
+    visible: '/images/eye-password-see-view-svgrepo-com.svg'              // contraseña VISIBLE
+  };
+
   /**
    * Limpia los errores previos del formulario.
    */
@@ -102,6 +108,7 @@
         loginMessage.textContent = 'Usuario o contraseña incorrectos.';
         loginMessage.className = 'form-message bad';
         passwordInput.value = '';
+        resetPasswordToggle();
         passwordInput.focus();
       } else if (err.status === 403) {
         // Cuenta inactiva
@@ -115,6 +122,72 @@
     } finally {
       window.AppUI.setLoading(submitBtn, false);
     }
+  }
+
+  /**
+   * Inicializa el toggle de visibilidad de la contraseña.
+   * Cambia type password <-> text y actualiza el estado accesible del botón.
+   */
+  function initPasswordToggle() {
+    const toggleBtn = document.getElementById('togglePassword');
+    if (!toggleBtn || !passwordInput) return;
+
+    // Preload del segundo ícono para evitar parpadeo al cambiar
+    const preload = new Image();
+    preload.src = PASSWORD_ICON.visible;
+
+    toggleBtn.addEventListener('click', () => {
+      const willBeVisible = passwordInput.type === 'password';
+
+      // 1. Cambiar el tipo del input
+      passwordInput.type = willBeVisible ? 'text' : 'password';
+
+      // 2. Estado visual del botón
+      toggleBtn.classList.toggle('is-visible', willBeVisible);
+
+      // 3. Accesibilidad (label + title)
+      const label = willBeVisible ? 'Ocultar contraseña' : 'Mostrar contraseña';
+      toggleBtn.setAttribute('aria-label', label);
+      toggleBtn.setAttribute('title', label);
+
+      // 4. Cambiar el ícono
+      applyPasswordIcon(willBeVisible);
+
+      // 5. Mantener foco y cursor al final
+      passwordInput.focus();
+      if (willBeVisible) {
+        const len = passwordInput.value.length;
+        try { passwordInput.setSelectionRange(len, len); } catch (_) { /* noop */ }
+      }
+    });
+  }
+
+  /**
+   * Fuerza que la contraseña vuelva a estar oculta.
+   * Se usa tras un 401 para no dejar el valor visible si el usuario reintenta.
+   */
+  function resetPasswordToggle() {
+    const toggleBtn = document.getElementById('togglePassword');
+    if (!toggleBtn) return;
+    passwordInput.type = 'password';
+    toggleBtn.classList.remove('is-visible');
+    toggleBtn.setAttribute('aria-label', 'Mostrar contraseña');
+    toggleBtn.setAttribute('title', 'Mostrar contraseña');
+  }
+
+  /**
+ * Aplica el ícono correcto al botón de toggle según la visibilidad.
+ * @param {boolean} visible  true = contraseña visible
+ */
+  function applyPasswordIcon(visible) {
+    const toggleBtn = document.getElementById('togglePassword');
+    if (!toggleBtn) return;
+    const img = toggleBtn.querySelector('img');
+    if (!img) return;
+
+    setTimeout(() => {
+      img.src = visible ? PASSWORD_ICON.visible : PASSWORD_ICON.hidden;
+    }, 100);
   }
 
   /**
@@ -140,5 +213,6 @@
     loginForm.addEventListener('submit', handleSubmit);
   }
   initDemoButtons();
+  initPasswordToggle();
   checkExistingSession();
 })();

@@ -43,7 +43,7 @@ test('Agenda Médica y Dashboard (Fase 8)', async (t) => {
     doc1Cookie = res.headers.get('set-cookie').split(';')[0];
   }
 
-  // 1. Consulta de Agenda diaria (Q9: ?fecha=YYYY-MM-DD)
+  // 1. Consulta de Agenda diaria (?fecha=YYYY-MM-DD)
   {
     const res = await fetch(`${baseUrl}/api/agenda?id_profesional=1&fecha=2026-11-02`, {
       headers: { Cookie: adminCookie }
@@ -55,7 +55,7 @@ test('Agenda Médica y Dashboard (Fase 8)', async (t) => {
     assert.ok(body.data[0].dias.length > 0);
   }
 
-  // 2. Consulta de Agenda mensual (Q9 / D-38: ?mes=YYYY-MM)
+  // 2. Consulta de Agenda mensual (?mes=YYYY-MM)
   {
     const res = await fetch(`${baseUrl}/api/agenda?id_profesional=1&mes=2026-11`, {
       headers: { Cookie: adminCookie }
@@ -67,7 +67,7 @@ test('Agenda Médica y Dashboard (Fase 8)', async (t) => {
     assert.ok(body.data[0].dias.length > 10);
   }
 
-  // 3. Profesional consulta agenda -> Forzado a ver solo la suya (D-02, CA-17.2)
+  // 3. Profesional consulta agenda -> Forzado a ver solo la suya
   {
     // Intenta pedir profesional 2 pero es la Dra. Laura Gómez (profesional 1)
     const res = await fetch(`${baseUrl}/api/agenda?id_profesional=2&fecha=2026-11-02`, {
@@ -79,7 +79,7 @@ test('Agenda Médica y Dashboard (Fase 8)', async (t) => {
     assert.equal(body.data[0].id_profesional, 1); // Siempre responde con la suya
   }
 
-  // 4. Consulta de Dashboard (D-39, Q8)
+  // 4. Consulta de Dashboard
   {
     const res = await fetch(`${baseUrl}/api/dashboard`, {
       headers: { Cookie: adminCookie }

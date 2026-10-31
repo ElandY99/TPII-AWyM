@@ -53,7 +53,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
     docCookie = res.headers.get('set-cookie').split(';')[0];
   }
 
-  // 1. Profesional intenta crear turno -> 403 (RFB-52, CA-12.8)
+  // 1. Profesional intenta crear turno -> 403
   {
     const res = await fetch(`${baseUrl}/api/turnos`, {
       method: 'POST',
@@ -79,7 +79,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
     assert.ok(body.data[0].horarios.includes('09:00'));
   }
 
-  // 3. Recepcionista crea turno exitosamente -> 201 Created y estado PENDIENTE (D-28)
+  // 3. Recepcionista crea turno exitosamente -> 201 Created y estado PENDIENTE
   let nuevoTurnoId = 0;
   {
     const res = await fetch(`${baseUrl}/api/turnos`, {
@@ -99,7 +99,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
     nuevoTurnoId = body.data.id_turno;
   }
 
-  // 4. Intento de doble reserva en el mismo slot -> 409 (RNF-04, CA-12.2)
+  // 4. Intento de doble reserva en el mismo slot -> 409
   {
     const res = await fetch(`${baseUrl}/api/turnos`, {
       method: 'POST',
@@ -116,7 +116,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
     assert.equal(body.error, 'El horario dejó de estar disponible. Seleccione otro.');
   }
 
-  // 5. Transición inválida: de PENDIENTE a ASISTIDO directo -> 409 (Q1)
+  // 5. Transición inválida: de PENDIENTE a ASISTIDO directo -> 409
   {
     const res = await fetch(`${baseUrl}/api/turnos/${nuevoTurnoId}/estado`, {
       method: 'PATCH',
@@ -126,7 +126,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
     assert.equal(res.status, 409);
   }
 
-  // 6. Transición válida: PENDIENTE -> CONFIRMADO -> 200 (Q1)
+  // 6. Transición válida: PENDIENTE -> CONFIRMADO -> 200
   {
     const res = await fetch(`${baseUrl}/api/turnos/${nuevoTurnoId}/estado`, {
       method: 'PATCH',
@@ -138,7 +138,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
     assert.equal(body.data.estado, 'CONFIRMADO');
   }
 
-  // 7. Profesional intenta cancelar turno -> 403 (D-04)
+  // 7. Profesional intenta cancelar turno -> 403
   {
     const res = await fetch(`${baseUrl}/api/turnos/${nuevoTurnoId}`, {
       method: 'DELETE',
@@ -147,7 +147,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
     assert.equal(res.status, 403);
   }
 
-  // 8. Recepcionista cancela turno -> 200 y libera horario (D-29, CA-14.1)
+  // 8. Recepcionista cancela turno -> 200 y libera horario
   {
     const res = await fetch(`${baseUrl}/api/turnos/${nuevoTurnoId}`, {
       method: 'DELETE',

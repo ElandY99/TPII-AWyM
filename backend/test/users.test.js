@@ -45,7 +45,7 @@ test('Gestión de Usuarios, Profesionales y Disponibilidad (Fase 5)', async (t) 
     recepcionCookie = res.headers.get('set-cookie').split(';')[0];
   }
 
-  // 1. Recepcionista intenta listar usuarios -> 403 (RFB-13)
+  // 1. Recepcionista intenta listar usuarios -> 403
   {
     const res = await fetch(`${baseUrl}/api/usuarios`, {
       headers: { Cookie: recepcionCookie }
@@ -53,7 +53,7 @@ test('Gestión de Usuarios, Profesionales y Disponibilidad (Fase 5)', async (t) 
     assert.equal(res.status, 403);
   }
 
-  // 2. Administrador crea un nuevo usuario Recepcionista -> 201 y clave_generada (D-10)
+  // 2. Administrador crea un nuevo usuario Recepcionista -> 201 y clave_generada
   let nuevoUsuarioId = 0;
   {
     const res = await fetch(`${baseUrl}/api/usuarios`, {
@@ -73,7 +73,7 @@ test('Gestión de Usuarios, Profesionales y Disponibilidad (Fase 5)', async (t) 
     nuevoUsuarioId = body.data.id_usuario;
   }
 
-  // 3. Administrador crea un PROFESIONAL de forma atómica con su agenda (Q4)
+  // 3. Administrador crea un PROFESIONAL de forma atómica con su agenda
   let nuevoProfesionalUserId = 0;
   let nuevoProfesionalId = 0;
   {
@@ -92,7 +92,7 @@ test('Gestión de Usuarios, Profesionales y Disponibilidad (Fase 5)', async (t) 
         },
         disponibilidad: [
           { dia_semana: 'LUNES', hora_inicio: '08:00', hora_fin: '12:00' },
-          { dia_semana: 'LUNES', hora_inicio: '16:00', hora_fin: '20:00' } // Multi-franja Q5
+          { dia_semana: 'LUNES', hora_inicio: '16:00', hora_fin: '20:00' } // Multi-franja
         ]
       })
     });
@@ -105,7 +105,7 @@ test('Gestión de Usuarios, Profesionales y Disponibilidad (Fase 5)', async (t) 
     nuevoProfesionalId = body.data.id_profesional;
   }
 
-  // 4. Intentar crear profesional con consultorio ocupado ('consultorio201') -> 409 (D-18)
+  // 4. Intentar crear profesional con consultorio ocupado ('consultorio201') -> 409
   {
     const res = await fetch(`${baseUrl}/api/usuarios`, {
       method: 'POST',
@@ -149,7 +149,7 @@ test('Gestión de Usuarios, Profesionales y Disponibilidad (Fase 5)', async (t) 
     assert.match(body.error, /Desactive primero el profesional asociado/);
   }
 
-  // 7. Desactivar profesional: primero requiere liberar consultorio y vaciar disponibilidad (Q10)
+  // 7. Desactivar profesional: primero requiere liberar consultorio y vaciar disponibilidad
   // Intento de desactivar sin liberar consultorio -> 409
   {
     const res = await fetch(`${baseUrl}/api/profesionales/${nuevoProfesionalId}`, {
@@ -180,7 +180,7 @@ test('Gestión de Usuarios, Profesionales y Disponibilidad (Fase 5)', async (t) 
     });
   }
 
-  // Ahora la desactivación del profesional es exitosa y desactiva al usuario vinculado (Q10)
+  // Ahora la desactivación del profesional es exitosa y desactiva al usuario vinculado
   {
     const res = await fetch(`${baseUrl}/api/profesionales/${nuevoProfesionalId}`, {
       method: 'DELETE',

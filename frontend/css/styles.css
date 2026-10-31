@@ -308,6 +308,7 @@ textarea {
 .sidebar::-webkit-scrollbar {
   width: 5px;
 }
+
 .sidebar::-webkit-scrollbar-thumb {
   background: #c2cbd2;
   border-radius: 4px;
@@ -453,6 +454,7 @@ textarea {
    10. FORMULARIOS
    ------------------------------------------------------------- */
 .field {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -945,6 +947,7 @@ tbody tr:hover {
     opacity: 0;
     transform: translateX(120%);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1050,9 +1053,17 @@ tbody tr:hover {
   animation: modalScaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.modal-sm { max-width: 440px; }
-.modal-md { max-width: 620px; }
-.modal-lg { max-width: 860px; }
+.modal-sm {
+  max-width: 440px;
+}
+
+.modal-md {
+  max-width: 620px;
+}
+
+.modal-lg {
+  max-width: 860px;
+}
 
 .modal-header {
   display: flex;
@@ -1104,18 +1115,35 @@ tbody tr:hover {
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalFadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes modalScaleUp {
-  from { opacity: 0; transform: scale(0.96) translateY(8px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* -------------------------------------------------------------
@@ -1146,12 +1174,41 @@ tbody tr:hover {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* -------------------------------------------------------------
    19. CLAVE GENERADA (COPY BOX)
    ------------------------------------------------------------- */
+.show-hide-password {
+  position: absolute;
+  right: 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  line-height: 0;
+  color: inherit;
+  transition: .2s ease;
+}
+
+.show-hide-password:hover {
+  opacity: 0.7;
+}
+
+.show-hide-password.is-visible {
+  transform: rotateY(180deg)  scaleX(-1);
+}
+
+/* feedback visual cuando la contraseña está visible */
+.show-hide-password:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .password-box {
   background: #f4f6f8;
   border: 1px dashed var(--blue);
@@ -1372,4 +1429,3 @@ tbody tr:hover {
   font-size: 0.8rem;
   border-radius: 4px;
 }
-

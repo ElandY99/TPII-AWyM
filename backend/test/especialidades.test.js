@@ -45,7 +45,7 @@ test('CRUD de Especialidades y control de acceso por rol', async (t) => {
     recepcionCookie = res.headers.get('set-cookie').split(';')[0];
   }
 
-  // 1. Recepcionista puede listar especialidades (D-07) -> 200
+  // 1. Recepcionista puede listar especialidades -> 200
   {
     const res = await fetch(`${baseUrl}/api/especialidades`, {
       headers: { Cookie: recepcionCookie }
@@ -101,7 +101,7 @@ test('CRUD de Especialidades y control de acceso por rol', async (t) => {
     assert.equal(body.data.nombre, 'Dermatología Avanzada');
   }
 
-  // 6. Intento de desactivar especialidad con médicos activos (id 1: Clínica médica) -> 409 Conflict (D-15)
+  // 6. Intento de desactivar especialidad con médicos activos (id 1: Clínica médica) -> 409 Conflict
   {
     const res = await fetch(`${baseUrl}/api/especialidades/1`, {
       method: 'DELETE',

@@ -10,10 +10,10 @@ export const config = {
   dbPath: process.env.DB_PATH || path.resolve(rootDir, 'backend/data/salud_turnos.db'),
   cookieName: 'st_sid',
   timeZone: 'America/Argentina/Buenos_Aires',
-  rootDir,
-  frontendDir: path.resolve(rootDir, 'frontend'),
-  cssDir: path.resolve(rootDir, 'frontend/css'),
-  jsDir: path.resolve(rootDir, 'frontend/js'),
+  rootDir, // raiz del proyecto
+  frontendDir: path.resolve(rootDir, 'frontend'), // raíz del frontend
+  cssDir: path.resolve(rootDir, 'frontend/css'),  // Estilos del frontend
+  jsDir: path.resolve(rootDir, 'frontend/js'),    // js del frontend
   scrypt: {
     n: 16384,
     r: 8,

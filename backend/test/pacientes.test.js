@@ -53,7 +53,7 @@ test('Gestión de Pacientes (Fase 6)', async (t) => {
     assert.equal(body.data.length, 2);
   }
 
-  // 2. Búsqueda rápida 'q' insensible a tildes/mayúsculas (D-37, Q12)
+  // 2. Búsqueda rápida 'q' insensible a tildes/mayúsculas
   {
     const res = await fetch(`${baseUrl}/api/pacientes?q=lopez`, {
       headers: { Cookie: recepcionCookie }
@@ -64,7 +64,7 @@ test('Gestión de Pacientes (Fase 6)', async (t) => {
     assert.equal(body.data[0].nombre, 'Ana');
   }
 
-  // 3. Recepcionista registra nuevo paciente válido con D-17, D-18, D-19 -> 201 Created
+  // 3. Recepcionista registra nuevo paciente válido con -> 201 Created
   let nuevoPacienteId = 0;
   {
     const res = await fetch(`${baseUrl}/api/pacientes`, {
@@ -86,7 +86,7 @@ test('Gestión de Pacientes (Fase 6)', async (t) => {
     nuevoPacienteId = body.data.id_paciente;
   }
 
-  // 4. Intento de alta con DNI duplicado -> 409 con mensaje CU-02 5b
+  // 4. Intento de alta con DNI duplicado -> 409 con mensaje
   {
     const res = await fetch(`${baseUrl}/api/pacientes`, {
       method: 'POST',
@@ -103,7 +103,7 @@ test('Gestión de Pacientes (Fase 6)', async (t) => {
     assert.equal(body.error, 'El DNI ingresado ya se encuentra registrado en el sistema.');
   }
 
-  // 5. Recepcionista intenta desactivar paciente -> 403 (D-16: solo Administrador)
+  // 5. Recepcionista intenta desactivar paciente -> 403 (solo Administrador)
   {
     const res = await fetch(`${baseUrl}/api/pacientes/${nuevoPacienteId}`, {
       method: 'DELETE',
