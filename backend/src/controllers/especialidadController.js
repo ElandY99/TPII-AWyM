@@ -4,7 +4,7 @@ export const especialidadController = {
   list(req, res, next) {
     try {
       const filters = req.valid.query || {};
-      const data = especialidadService.list(filters);
+      const data = especialidadService.list(filters, req.user);
       res.json({
         data,
         mensaje: data.length === 0 ? 'No se encontraron especialidades' : undefined

@@ -80,7 +80,10 @@
       profesional: window.AppSession.isDoctor() ? undefined : (doctorVal || undefined)
     };
 
-    turnsTable.innerHTML = '<tr><td colspan="9" class="empty-row">Cargando turnos...</td></tr>';
+    const isPaciente = window.AppSession.isPaciente ? window.AppSession.isPaciente() : false;
+    const colSpan = isPaciente ? 7 : 9;
+
+    turnsTable.innerHTML = `<tr><td colspan="${colSpan}" class="empty-row">Cargando turnos...</td></tr>`;
 
     try {
       const res = await window.Api.turnos.list(query, currentAbortController.signal);
@@ -90,7 +93,7 @@
     } catch (err) {
       if (err.name === 'AbortError') return;
       console.error('Error al cargar turnos:', err);
-      turnsTable.innerHTML = `<tr><td colspan="9" class="empty-row" style="color: var(--danger);">${window.AppHelpers.esc(err.message || 'Error al cargar turnos')}</td></tr>`;
+      turnsTable.innerHTML = `<tr><td colspan="${colSpan}" class="empty-row" style="color: var(--danger);">${window.AppHelpers.esc(err.message || 'Error al cargar turnos')}</td></tr>`;
       updatePagination(0, 0, 0);
     }
   }
@@ -99,9 +102,11 @@
    * Renderiza la página actual de turnos (paginación de 20 filas).
    */
   function renderCurrentPage() {
+    const isPaciente = window.AppSession.isPaciente ? window.AppSession.isPaciente() : false;
+    const colSpan = isPaciente ? 8 : 9;
     const total = allLoadedTurnos.length;
     if (total === 0) {
-      turnsTable.innerHTML = '<tr><td colspan="9" class="empty-row">No se registraron turnos para los filtros seleccionados.</td></tr>';
+      turnsTable.innerHTML = `<tr><td colspan="${colSpan}" class="empty-row">${isPaciente ? 'No registra turnos solicitados.' : 'No se registraron turnos para los filtros seleccionados.'}</td></tr>`;
       updatePagination(0, 0, 0);
       return;
     }
@@ -123,20 +128,36 @@
       const profesionalInfo = `${window.AppHelpers.esc(t.profesional_nombre)} ${window.AppHelpers.esc(t.profesional_apellido)}`;
       const motivoLabel = t.motivo_consulta ? window.AppHelpers.esc(t.motivo_consulta) : '<span class="muted">-</span>';
 
-      tr.innerHTML = `
-        <td><strong>${window.AppHelpers.formatDate(t.fecha)}</strong></td>
-        <td><code>${window.AppHelpers.esc(t.hora)}</code></td>
-        <td>${pacienteInfo}</td>
-        <td>${profesionalInfo}</td>
-        <td>${window.AppHelpers.esc(t.especialidad_nombre || '-')}</td>
-        <td>${window.AppHelpers.esc(t.consultorio || '-')}</td>
-        <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${window.AppHelpers.esc(t.motivo_consulta || '')}">${motivoLabel}</td>
-        <td>${window.AppHelpers.statusBadge(t.estado)}</td>
-        <td class="actions-cell"></td>
-      `;
+      if (isPaciente) {
+        tr.innerHTML = `
+          <td><strong>${window.AppHelpers.formatDate(t.fecha)}</strong></td>
+          <td><code>${window.AppHelpers.esc(t.hora)}</code></td>
+          <td>${profesionalInfo}</td>
+          <td>${window.AppHelpers.esc(t.especialidad_nombre || '-')}</td>
+          <td>${window.AppHelpers.esc(t.consultorio || '-')}</td>
+          <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${window.AppHelpers.esc(t.motivo_consulta || '')}">${motivoLabel}</td>
+          <td>${window.AppHelpers.statusBadge(t.estado)}</td>
+          <td class="actions-cell"></td>
+        `;
 
-      const actionsCell = tr.querySelector('.actions-cell');
-      renderRowActions(actionsCell, t, currentUser, isDoctor, isRecepOrAdmin);
+        const actionsCell = tr.querySelector('.actions-cell');
+        renderRowActions(actionsCell, t, currentUser, isDoctor, isRecepOrAdmin);
+      } else {
+        tr.innerHTML = `
+          <td><strong>${window.AppHelpers.formatDate(t.fecha)}</strong></td>
+          <td><code>${window.AppHelpers.esc(t.hora)}</code></td>
+          <td>${pacienteInfo}</td>
+          <td>${profesionalInfo}</td>
+          <td>${window.AppHelpers.esc(t.especialidad_nombre || '-')}</td>
+          <td>${window.AppHelpers.esc(t.consultorio || '-')}</td>
+          <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${window.AppHelpers.esc(t.motivo_consulta || '')}">${motivoLabel}</td>
+          <td>${window.AppHelpers.statusBadge(t.estado)}</td>
+          <td class="actions-cell"></td>
+        `;
+
+        const actionsCell = tr.querySelector('.actions-cell');
+        renderRowActions(actionsCell, t, currentUser, isDoctor, isRecepOrAdmin);
+      }
 
       fragment.appendChild(tr);
     });
@@ -153,10 +174,18 @@
   function renderRowActions(container, t, user, isDoctor, isRecepOrAdmin) {
     const estado = t.estado;
     const hoyLocal = window.AppHelpers.todayLocal();
+    const isPaciente = window.AppSession.isPaciente ? window.AppSession.isPaciente() : false;
 
     // 1. ESTADO: PENDIENTE
     if (estado === 'PENDIENTE') {
-      if (isRecepOrAdmin) {
+      if (isPaciente) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'btn btn-danger btn-xs';
+        cancelBtn.textContent = 'Cancelar';
+        cancelBtn.addEventListener('click', () => handleCancelTurno(t.id_turno));
+        container.appendChild(cancelBtn);
+      } else if (isRecepOrAdmin) {
         // Confirmar turno
         const confBtn = document.createElement('button');
         confBtn.type = 'button';
@@ -186,6 +215,14 @@
 
     // 2. ESTADO: CONFIRMADO
     else if (estado === 'CONFIRMADO') {
+      if (isPaciente) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'btn btn-danger btn-xs';
+        cancelBtn.textContent = 'Cancelar';
+        cancelBtn.addEventListener('click', () => handleCancelTurno(t.id_turno));
+        container.appendChild(cancelBtn);
+      }
       if (isDoctor) {
         // Registrar llegada a consultorio (solo médico asignado, hoy y en franja horaria)
         const llegadaBtn = document.createElement('button');
@@ -272,6 +309,10 @@
         });
         container.appendChild(verObsBtn);
       }
+    }
+
+    if (container.children.length === 0) {
+      container.innerHTML = '<span class="muted">-</span>';
     }
   }
 
@@ -707,7 +748,8 @@
   async function handleCreateTurnSubmit(e) {
     e.preventDefault();
 
-    const id_paciente = Number(patientSelect.value);
+    const isPaciente = window.AppSession.isPaciente ? window.AppSession.isPaciente() : false;
+    const id_paciente = isPaciente ? undefined : Number(patientSelect.value);
     const id_profesional = Number(doctorSelect.value);
     const fecha = turnDateInput.value;
     const hora = turnTimeSelect.value;
@@ -715,7 +757,7 @@
 
     // Validación cliente
     const errorMap = {};
-    if (!id_paciente) errorMap.id_paciente = 'Debe seleccionar un paciente de la lista de búsqueda.';
+    if (!isPaciente && !id_paciente) errorMap.id_paciente = 'Debe seleccionar un paciente de la lista de búsqueda.';
     if (!id_profesional) errorMap.id_profesional = 'Debe seleccionar un profesional.';
     if (!fecha) errorMap.fecha = 'Fecha requerida.';
     if (!hora) errorMap.hora = 'Debe seleccionar un horario disponible.';
@@ -726,22 +768,80 @@
     window.AppUI.setLoading(submitTurnBtn, true, 'Confirmando...');
 
     try {
-      await window.Api.turnos.create({
-        id_paciente,
+      const payload = {
         id_profesional,
         fecha,
         hora,
         motivo_consulta
-      });
+      };
+      if (!isPaciente) {
+        payload.id_paciente = id_paciente;
+      }
 
-      window.AppUI.showToast('Turno asignado exitosamente.', 'ok');
+      const res = await window.Api.turnos.create(payload);
+      const nuevoTurno = res.data;
+
       turnFormCard.classList.add('hidden');
       turnForm.reset();
-      patientSelect.value = '';
-      patientSearchInput.value = '';
+      if (patientSelect) patientSelect.value = '';
+      if (patientSearchInput) patientSearchInput.value = '';
       resetAvailableSlots();
 
       loadTurnos();
+
+      if (isPaciente) {
+        // Modal de confirmación para paciente (RFM-16, HU-M07, CA-M07.1, CA-M07.2)
+        const docName = nuevoTurno.profesional_nombre
+          ? `${nuevoTurno.profesional_nombre} ${nuevoTurno.profesional_apellido}`
+          : (doctorSelect.selectedOptions[0]?.text || '-');
+        const specName = nuevoTurno.especialidad_nombre || (specialtySelect.selectedOptions[0]?.text || '-');
+        const consultorioVal = nuevoTurno.consultorio || '-';
+        const fechaFormateada = window.AppHelpers.formatDate(nuevoTurno.fecha || fecha);
+        const horaVal = nuevoTurno.hora || hora;
+
+        window.AppUI.modal({
+          title: '¡Solicitud de Turno Registrada!',
+          size: 'md',
+          content: `
+            <div style="text-align: center; margin-bottom: 16px;">
+              <div style="font-size: 2.2rem; color: var(--success); margin-bottom: 8px;">✓</div>
+              <h3 style="margin: 0 0 4px;">Turno #${nuevoTurno.id_turno}</h3>
+              <span class="badge" style="background: #fff3e0; color: #e65100; font-size: 0.85rem; padding: 4px 10px;">Estado: PENDIENTE</span>
+            </div>
+            <div style="background: var(--bg); padding: 14px; border-radius: 8px; margin-bottom: 16px; font-size: 0.95rem; line-height: 1.6;">
+              <div><strong>Profesional:</strong> ${window.AppHelpers.esc(docName)}</div>
+              <div><strong>Especialidad:</strong> ${window.AppHelpers.esc(specName)}</div>
+              <div><strong>Consultorio:</strong> ${window.AppHelpers.esc(consultorioVal)}</div>
+              <div><strong>Fecha:</strong> ${fechaFormateada}</div>
+              <div><strong>Horario:</strong> ${window.AppHelpers.esc(horaVal)} hs</div>
+            </div>
+            <div style="background: #e3f2fd; border-left: 4px solid var(--primary); padding: 10px 14px; border-radius: 4px; font-size: 0.88rem; color: #0d47a1; margin-bottom: 8px;">
+              ℹ Su solicitud ha sido registrada correctamente. El turno se encuentra en estado <strong>Pendiente</strong> y debe ser confirmado por la recepción del centro médico.
+            </div>
+          `,
+          actions: [
+            {
+              label: 'Ver mis turnos',
+              className: 'btn btn-primary',
+              onClick: (_, close) => {
+                close();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            },
+            {
+              label: 'Solicitar otro turno',
+              className: 'btn btn-light',
+              onClick: (_, close) => {
+                close();
+                turnFormCard.classList.remove('hidden');
+                turnFormCard.scrollIntoView({ behavior: 'smooth' });
+              }
+            }
+          ]
+        });
+      } else {
+        window.AppUI.showToast('Turno asignado exitosamente.', 'ok');
+      }
     } catch (err) {
       if (err.status === 400 || err.status === 409) {
         window.AppUI.renderFieldErrors(turnForm, err.campos);
@@ -761,12 +861,29 @@
    */
   function initEvents(usuario) {
     const isDoctor = usuario.rol === 'PROFESIONAL';
+    const isPaciente = usuario.rol === 'PACIENTE';
 
     if (isDoctor) {
       if (pageTitle) pageTitle.textContent = 'Mis turnos médicos';
       if (pageSubtitle) pageSubtitle.textContent = 'Historial y consultas programadas bajo su atención.';
       if (toggleNewTurnBtn) toggleNewTurnBtn.classList.add('hidden');
       if (filterDoctorField) filterDoctorField.classList.add('hidden');
+    } else if (isPaciente) {
+      if (pageTitle) pageTitle.textContent = 'Mis turnos médicos';
+      if (pageSubtitle) pageSubtitle.textContent = 'Historial y turnos programados.';
+      if (toggleNewTurnBtn) {
+        toggleNewTurnBtn.textContent = '+ Solicitar turno';
+        toggleNewTurnBtn.classList.remove('hidden');
+      }
+      const patientField = document.getElementById('patientFieldGroup');
+      if (patientField) patientField.classList.add('hidden');
+      if (patientSearchInput) patientSearchInput.removeAttribute('required');
+      if (patientSelect) patientSelect.removeAttribute('required');
+
+      const thPatient = document.getElementById('thPatient');
+      if (thPatient) thPatient.classList.add('hidden');
+
+      initCreateForm();
     } else {
       initCreateForm();
     }

@@ -41,7 +41,7 @@ export const pacienteRepository = {
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
     const sql = `
-      SELECT id_paciente, dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social, estado
+      SELECT id_paciente, id_usuario, dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social, estado
       FROM paciente
       ${where}
       ORDER BY apellido ASC, nombre ASC
@@ -53,10 +53,19 @@ export const pacienteRepository = {
   findById(id) {
     const db = getDb();
     return db.prepare(`
-      SELECT id_paciente, dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social, estado
+      SELECT id_paciente, id_usuario, dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social, estado
       FROM paciente
       WHERE id_paciente = ?
     `).get(id);
+  },
+
+  findByIdUsuario(id_usuario) {
+    const db = getDb();
+    return db.prepare(`
+      SELECT id_paciente, id_usuario, dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social, estado
+      FROM paciente
+      WHERE id_usuario = ?
+    `).get(id_usuario);
   },
 
   findByDni(dni, excludeId = null) {
@@ -67,12 +76,21 @@ export const pacienteRepository = {
     return db.prepare('SELECT id_paciente, dni, estado FROM paciente WHERE dni = ?').get(dni);
   },
 
-  create({ dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social }) {
+  findByCorreo(correo, excludeId = null) {
+    const db = getDb();
+    if (excludeId) {
+      return db.prepare('SELECT id_paciente, correo, estado FROM paciente WHERE normalizar(correo) = normalizar(?) AND id_paciente <> ?').get(correo, excludeId);
+    }
+    return db.prepare('SELECT id_paciente, correo, estado FROM paciente WHERE normalizar(correo) = normalizar(?)').get(correo);
+  },
+
+  create({ id_usuario, dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social }) {
     const db = getDb();
     const result = db.prepare(`
-      INSERT INTO paciente (dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social, estado)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+      INSERT INTO paciente (id_usuario, dni, nombre, apellido, telefono, correo, fecha_nacimiento, obra_social, estado)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
     `).run(
+      id_usuario,
       dni,
       nombre,
       apellido,

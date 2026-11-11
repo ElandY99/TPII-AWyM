@@ -4,7 +4,10 @@ import { auditService } from './auditService.js';
 import { getDb } from '../db/connection.js';
 
 export const especialidadService = {
-  list(filters = {}) {
+  list(filters = {}, user) {
+    if (user?.rol === 'PACIENTE') {
+      filters = { ...filters, estado: 1 };
+    }
     return especialidadRepository.findAll(filters);
   },
 

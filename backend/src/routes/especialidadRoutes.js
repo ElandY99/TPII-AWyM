@@ -15,17 +15,17 @@ export const especialidadRouter = Router();
 // Todas las rutas requieren estar autenticado
 especialidadRouter.use(requireAuth);
 
-// Lectura de especialidades permitida para ADMINISTRADOR y RECEPCIONISTA (D-07)
+// Lectura de especialidades permitida para ADMINISTRADOR, RECEPCIONISTA y PACIENTE (RFM-08)
 especialidadRouter.get(
   '/',
-  requireRole('ADMINISTRADOR', 'RECEPCIONISTA'),
+  requireRole('ADMINISTRADOR', 'RECEPCIONISTA', 'PACIENTE'),
   validate({ query: especialidadFilterSchema }),
   especialidadController.list
 );
 
 especialidadRouter.get(
   '/:id',
-  requireRole('ADMINISTRADOR', 'RECEPCIONISTA'),
+  requireRole('ADMINISTRADOR', 'RECEPCIONISTA', 'PACIENTE'),
   validate({ params: especialidadIdParamSchema }),
   especialidadController.getById
 );

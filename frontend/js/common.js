@@ -18,7 +18,7 @@
     {
       href: 'dashboard.html',
       label: 'Panel',
-      roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL']
+      roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL', 'PACIENTE']
     },
     {
       href: 'pacientes.html',
@@ -28,7 +28,7 @@
     {
       href: 'turno.html',
       label: 'Turnos',
-      roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL']
+      roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL', 'PACIENTE']
     },
     {
       href: 'agenda.html',
@@ -53,7 +53,7 @@
     {
       href: 'cuenta.html',
       label: 'Mi cuenta',
-      roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL']
+      roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL', 'PACIENTE']
     }
   ];
 
@@ -69,9 +69,11 @@
   window.AppSession = {
     ready: sessionReadyPromise,
     getUser: () => currentUser,
+    getUsuario: () => currentUser,
     isAdmin: () => currentUser?.rol === 'ADMINISTRADOR',
     isRecep: () => currentUser?.rol === 'RECEPCIONISTA',
-    isDoctor: () => currentUser?.rol === 'PROFESIONAL'
+    isDoctor: () => currentUser?.rol === 'PROFESIONAL',
+    isPaciente: () => currentUser?.rol === 'PACIENTE'
   };
 
   /**
@@ -102,7 +104,9 @@
         ? 'Administrador'
         : usuario.rol === 'RECEPCIONISTA'
         ? 'Recepcionista'
-        : 'Profesional';
+        : usuario.rol === 'PROFESIONAL'
+        ? 'Profesional'
+        : 'Paciente';
 
     userCard.innerHTML = `
       <div class="user-avatar" aria-hidden="true">${window.AppHelpers.esc(usuario.nombre.charAt(0))}${window.AppHelpers.esc(usuario.apellido.charAt(0))}</div>
@@ -123,8 +127,8 @@
         link.href = item.href;
         link.textContent = item.label;
 
-        // Label adaptada para el rol profesional
-        if (item.href === 'turno.html' && usuario.rol === 'PROFESIONAL') {
+        // Label adaptada para el rol profesional y paciente
+        if (item.href === 'turno.html' && (usuario.rol === 'PROFESIONAL' || usuario.rol === 'PACIENTE')) {
           link.textContent = 'Mis turnos';
         }
 
@@ -207,6 +211,21 @@
         sessionStorage.setItem(
           'saludturnos_motivo_logout',
           'Su cuenta médica se encuentra inactiva. Comuníquese con el administrador.'
+        );
+        try {
+          await window.Api.auth.logout();
+        } catch {
+          // ignore
+        }
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Mitigación Paciente con id_paciente null (cuenta o ficha inactiva) (RN-15)
+      if (currentUser.rol === 'PACIENTE' && !currentUser.id_paciente) {
+        sessionStorage.setItem(
+          'saludturnos_motivo_logout',
+          'Su ficha de paciente se encuentra inactiva o no vinculada. Comuníquese con la administración.'
         );
         try {
           await window.Api.auth.logout();

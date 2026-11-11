@@ -58,3 +58,11 @@ pacienteRouter.patch(
   validate({ params: pacienteIdParamSchema }),
   pacienteController.activate
 );
+
+// Restablecer contraseña de paciente: Administrador y Recepcionista (RFM-23)
+pacienteRouter.post(
+  '/:id/clave',
+  requireRole('ADMINISTRADOR', 'RECEPCIONISTA'),
+  validate({ params: pacienteIdParamSchema }),
+  pacienteController.resetPassword
+);

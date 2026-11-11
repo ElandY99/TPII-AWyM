@@ -45,8 +45,48 @@ export const turnoService = {
 
   list(filters = {}, user) {
     this.marcarAusentes();
-    const scope = user.rol === 'PROFESIONAL' ? user.id_profesional : null;
-    return turnoRepository.findAll({ ...filters, id_profesional_scope: scope });
+
+    if (user.rol === 'PROFESIONAL') {
+      if (!user.id_profesional) return []; // Corrección H-01
+      return turnoRepository.findAll({ ...filters, id_profesional_scope: user.id_profesional });
+    }
+
+    if (user.rol === 'PACIENTE') {
+      if (!user.id_paciente) return []; // Aislamiento estricto RN-15
+      const list = turnoRepository.findAll({ ...filters, id_paciente_scope: user.id_paciente });
+
+      // DM-21: Criterio de ordenación:
+      // Primero los próximos activos (fecha futura o hoy >= horaActual, estado <> CANCELADO) fecha ASC, hora ASC
+      // Luego los pasados o cancelados fecha DESC, hora DESC
+      const { fecha: hoy, hora: horaActual } = getNowInArgentina();
+
+      const isUpcomingActive = (t) => {
+        if (t.estado === 'CANCELADO') return false;
+        if (t.fecha > hoy) return true;
+        if (t.fecha === hoy && t.hora >= horaActual) return true;
+        return false;
+      };
+
+      const upcoming = [];
+      const pastOrCancelled = [];
+
+      for (const t of list) {
+        // RFM-18: Omitir observaciones del profesional para el paciente
+        const { observaciones, ...safeTurno } = t;
+        if (isUpcomingActive(t)) {
+          upcoming.push(safeTurno);
+        } else {
+          pastOrCancelled.push(safeTurno);
+        }
+      }
+
+      upcoming.sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
+      pastOrCancelled.sort((a, b) => b.fecha.localeCompare(a.fecha) || b.hora.localeCompare(a.hora));
+
+      return [...upcoming, ...pastOrCancelled];
+    }
+
+    return turnoRepository.findAll(filters);
   },
 
   getById(id, user) {
@@ -55,9 +95,17 @@ export const turnoService = {
     if (!turno) {
       throw new NotFoundError('Turno no encontrado');
     }
-    // Si es PROFESIONAL, solo puede consultar sus propios turnos (D-02)
-    if (user.rol === 'PROFESIONAL' && turno.id_profesional !== user.id_profesional) {
+    // Si es PROFESIONAL, solo puede consultar sus propios turnos (D-02, H-01)
+    if (user.rol === 'PROFESIONAL' && (!user.id_profesional || turno.id_profesional !== user.id_profesional)) {
       throw new NotFoundError('Turno no encontrado');
+    }
+    // Si es PACIENTE, solo puede consultar sus propios turnos (RFM-19)
+    if (user.rol === 'PACIENTE') {
+      if (!user.id_paciente || turno.id_paciente !== user.id_paciente) {
+        throw new NotFoundError('Turno no encontrado');
+      }
+      const { observaciones, ...safeTurno } = turno;
+      return safeTurno;
     }
     return turno;
   },
@@ -68,6 +116,24 @@ export const turnoService = {
    */
   create(data, user) {
     this.marcarAusentes();
+
+    // 0. Si es PACIENTE, forzar solicitud exclusiva para sí mismo (RFM-12)
+    if (user.rol === 'PACIENTE') {
+      if (!user.id_paciente) {
+        throw new ForbiddenError('Ficha de paciente inactiva o no vinculada');
+      }
+      if (data.id_paciente && data.id_paciente !== user.id_paciente) {
+        throw new ForbiddenError('El paciente solo puede solicitar turnos para sí mismo');
+      }
+      data.id_paciente = user.id_paciente;
+      data.observaciones = null;
+    } else {
+      if (!data.id_paciente) {
+        throw new ValidationError('Debe seleccionar un paciente', {
+          id_paciente: 'Debe seleccionar un paciente'
+        });
+      }
+    }
 
     // 1. Validar que el paciente exista y esté activo
     const paciente = pacienteRepository.findById(data.id_paciente);
@@ -158,6 +224,9 @@ export const turnoService = {
    * - Paciente: no modificable jamás.
    */
   update(id, data, user) {
+    if (user.rol === 'PACIENTE') {
+      throw new ForbiddenError('Los pacientes no tienen permiso para modificar turnos.');
+    }
     this.marcarAusentes();
     const current = this.getById(id, user);
 
@@ -271,7 +340,17 @@ export const turnoService = {
     this.marcarAusentes();
     const current = this.getById(id, user);
 
-    // Cancelar turno: solo Recepción y Admin (D-04)
+    // Si es PACIENTE, solo se permite cancelar turnos propios en estado PENDIENTE o CONFIRMADO
+    if (user.rol === 'PACIENTE') {
+      if (nuevoEstado !== 'CANCELADO') {
+        throw new ForbiddenError('Los pacientes no tienen permiso para modificar el estado de turnos.');
+      }
+      if (current.estado !== 'PENDIENTE' && current.estado !== 'CONFIRMADO') {
+        throw new ConflictError('Solo se pueden cancelar turnos en estado Pendiente o Confirmado.');
+      }
+    }
+
+    // Cancelar turno: solo Recepción, Admin y Paciente (los profesionales no pueden cancelar directamente D-04)
     if (nuevoEstado === 'CANCELADO' && user.rol === 'PROFESIONAL') {
       throw new ForbiddenError('Los profesionales médicos no pueden cancelar turnos directamente.');
     }

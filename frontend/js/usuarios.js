@@ -91,6 +91,8 @@
         rolBadge = '<span class="badge" style="background: #e8eaf6; color: #283593;">Admin</span>';
       } else if (u.rol === 'RECEPCIONISTA') {
         rolBadge = '<span class="badge" style="background: #e0f2f1; color: #00695c;">Recepción</span>';
+      } else if (u.rol === 'PACIENTE') {
+        rolBadge = '<span class="badge" style="background: #e1f5fe; color: #0277bd;">Paciente</span>';
       } else {
         const docExtra = linkedDoctor ? ` (${window.AppHelpers.esc(linkedDoctor.especialidad_nombre || '')})` : '';
         rolBadge = `<span class="badge" style="background: #ede7f6; color: #4527a0;">Médico${docExtra}</span>`;
@@ -270,8 +272,36 @@
             <select id="cuRol" name="rol" required>
               <option value="RECEPCIONISTA">Recepcionista</option>
               <option value="PROFESIONAL">Profesional Médico</option>
+              <option value="PACIENTE">Paciente</option>
             </select>
             <small class="error" id="cuRolError"></small>
+          </div>
+        </div>
+
+        <!-- Sección Paciente (Visible solo si rol === PACIENTE) -->
+        <div id="cuPatientSection" class="hidden" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line);">
+          <h4 style="margin: 0 0 10px; color: var(--navy-dark);">Datos de la Ficha del Paciente</h4>
+          <div class="grid-form" style="gap: 12px; margin-bottom: 14px;">
+            <div class="field">
+              <label for="cuDni">DNI * (7 u 8 dígitos)</label>
+              <input id="cuDni" name="dni" maxlength="8" placeholder="Ej: 30111222">
+              <small class="error" id="cuDniError"></small>
+            </div>
+            <div class="field">
+              <label for="cuTelefono">Teléfono (opcional)</label>
+              <input id="cuTelefono" name="telefono" maxlength="12" placeholder="Ej: 3764111111">
+              <small class="error" id="cuTelefonoError"></small>
+            </div>
+            <div class="field">
+              <label for="cuFechaNac">Fecha de nacimiento (opcional)</label>
+              <input type="date" id="cuFechaNac" name="fecha_nacimiento">
+              <small class="error" id="cuFechaNacError"></small>
+            </div>
+            <div class="field">
+              <label for="cuObraSocial">Obra Social (opcional)</label>
+              <input id="cuObraSocial" name="obra_social" maxlength="100" placeholder="Ej: OSDE">
+              <small class="error" id="cuObraSocialError"></small>
+            </div>
           </div>
         </div>
 
@@ -328,24 +358,30 @@
       ]
     });
 
-    // Control de visibilidad de sección profesional
+    // Control de visibilidad de sección profesional o paciente
     const rolSelect = modal.dialog.querySelector('#cuRol');
     const doctorSec = modal.dialog.querySelector('#cuDoctorSection');
+    const patientSec = modal.dialog.querySelector('#cuPatientSection');
     const franjasList = modal.dialog.querySelector('#cuFranjasList');
     const addFranjaBtn = modal.dialog.querySelector('#cuAddFranjaBtn');
 
-    function toggleDoctorSection() {
+    function toggleRoleSections() {
       if (rolSelect.value === 'PROFESIONAL') {
         doctorSec.classList.remove('hidden');
+        patientSec.classList.add('hidden');
         if (franjasList.children.length === 0) {
           addFranjaRow(franjasList, 'LUNES', '08:00', '12:00');
         }
+      } else if (rolSelect.value === 'PACIENTE') {
+        patientSec.classList.remove('hidden');
+        doctorSec.classList.add('hidden');
       } else {
         doctorSec.classList.add('hidden');
+        patientSec.classList.add('hidden');
       }
     }
 
-    rolSelect.addEventListener('change', toggleDoctorSection);
+    rolSelect.addEventListener('change', toggleRoleSections);
     addFranjaBtn.addEventListener('click', () => addFranjaRow(franjasList, 'LUNES', '08:00', '12:00'));
   }
 
@@ -419,6 +455,7 @@
 
     let profesionalData = undefined;
     let disponibilidadData = undefined;
+    let pacienteData = undefined;
 
     if (rol === 'PROFESIONAL') {
       const idEsp = Number(document.getElementById('cuEspecialidad').value);
@@ -457,6 +494,22 @@
         consultorio
       };
       disponibilidadData = franjas;
+    } else if (rol === 'PACIENTE') {
+      const dni = document.getElementById('cuDni').value.trim();
+      const telefono = document.getElementById('cuTelefono').value.trim() || undefined;
+      const fecha_nacimiento = document.getElementById('cuFechaNac').value.trim() || undefined;
+      const obra_social = document.getElementById('cuObraSocial').value.trim() || undefined;
+
+      if (!dni || !/^\d{7,8}$/.test(dni)) {
+        campos.cuDni = 'El DNI debe tener 7 u 8 dígitos numéricos.';
+      }
+
+      pacienteData = {
+        dni,
+        telefono,
+        fecha_nacimiento,
+        obra_social
+      };
     }
 
     // Render errores cliente
@@ -479,7 +532,8 @@
       correo: correo.toLowerCase(),
       rol,
       ...(profesionalData ? { profesional: profesionalData } : {}),
-      ...(disponibilidadData ? { disponibilidad: disponibilidadData } : {})
+      ...(disponibilidadData ? { disponibilidad: disponibilidadData } : {}),
+      ...(pacienteData ? { paciente: pacienteData } : {})
     };
 
     window.AppUI.setLoading(submitBtn, true, 'Creando...');
@@ -507,6 +561,10 @@
           else if (k === 'profesional.consultorio' || k === 'consultorio') mappedErrors.cuConsultorio = v;
           else if (k === 'profesional.id_especialidad' || k === 'id_especialidad') mappedErrors.cuEspecialidad = v;
           else if (k === 'disponibilidad') mappedErrors.cuDisponibilidad = v;
+          else if (k === 'paciente.dni' || k === 'dni') mappedErrors.cuDni = v;
+          else if (k === 'paciente.telefono' || k === 'telefono') mappedErrors.cuTelefono = v;
+          else if (k === 'paciente.fecha_nacimiento' || k === 'fecha_nacimiento') mappedErrors.cuFechaNac = v;
+          else if (k === 'paciente.obra_social' || k === 'obra_social') mappedErrors.cuObraSocial = v;
         }
 
         if (Object.keys(mappedErrors).length > 0) {

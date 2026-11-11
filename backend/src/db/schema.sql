@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS usuario (
   apellido TEXT NOT NULL,
   correo TEXT NOT NULL COLLATE NOCASE,
   clave_hash TEXT NOT NULL,
-  rol TEXT NOT NULL CHECK(rol IN ('ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL')),
+  rol TEXT NOT NULL CHECK(rol IN ('ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL', 'PACIENTE')),
   estado INTEGER NOT NULL DEFAULT 1 CHECK(estado IN (0, 1)),
   fecha_creacion TEXT NOT NULL DEFAULT (DATETIME('now', 'localtime')),
   CONSTRAINT uq_usuario_correo UNIQUE (correo)
@@ -72,9 +72,10 @@ CREATE TABLE IF NOT EXISTS disponibilidad (
   CONSTRAINT ck_disponibilidad_horario CHECK(hora_inicio < hora_fin)
 );
 
--- 6. Tabla de Pacientes
+-- 6. Tabla de Pacientes (Ampliación TP4: vinculación obligatoria 1:1 con usuario rol PACIENTE)
 CREATE TABLE IF NOT EXISTS paciente (
   id_paciente INTEGER PRIMARY KEY AUTOINCREMENT,
+  id_usuario INTEGER NOT NULL UNIQUE,
   dni TEXT NOT NULL CHECK(length(dni) BETWEEN 7 AND 8 AND dni GLOB '[0-9]*'),
   nombre TEXT NOT NULL,
   apellido TEXT NOT NULL,
@@ -83,7 +84,9 @@ CREATE TABLE IF NOT EXISTS paciente (
   fecha_nacimiento TEXT CHECK(fecha_nacimiento IS NULL OR (fecha_nacimiento GLOB '[1-2][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]' AND fecha_nacimiento >= '1900-01-01')),
   obra_social TEXT,
   estado INTEGER NOT NULL DEFAULT 1 CHECK(estado IN (0, 1)),
-  CONSTRAINT uq_paciente_dni UNIQUE (dni)
+  CONSTRAINT fk_paciente_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
+  CONSTRAINT uq_paciente_dni UNIQUE (dni),
+  CONSTRAINT uq_paciente_correo UNIQUE (correo)
 );
 
 -- 7. Tabla de Turnos

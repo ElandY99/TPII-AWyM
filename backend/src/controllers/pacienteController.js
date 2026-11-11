@@ -24,12 +24,13 @@ export const pacienteController = {
     }
   },
 
-  create(req, res, next) {
+  async create(req, res, next) {
     try {
-      const data = pacienteService.create(req.valid.body, req.user.id);
+      const result = await pacienteService.create(req.valid.body, req.user.id);
       res.status(201).json({
         mensaje: 'Paciente registrado exitosamente',
-        data
+        data: result.paciente,
+        clave_generada: result.clave_generada
       });
     } catch (err) {
       next(err);
@@ -69,6 +70,19 @@ export const pacienteController = {
       res.json({
         mensaje: 'Paciente reactivado correctamente',
         data
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async resetPassword(req, res, next) {
+    try {
+      const { id } = req.valid.params;
+      const result = await pacienteService.resetPassword(id, req.user.id);
+      res.json({
+        mensaje: 'Contraseña restablecida exitosamente',
+        clave_generada: result.clave_generada
       });
     } catch (err) {
       next(err);

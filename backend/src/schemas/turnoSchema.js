@@ -5,7 +5,7 @@ export const turnoIdParamSchema = z.object({
 }).strict();
 
 export const turnoCreateSchema = z.object({
-  id_paciente: z.number().int().positive('Debe seleccionar un paciente'),
+  id_paciente: z.number().int().positive('Debe seleccionar un paciente').optional(),
   id_profesional: z.number().int().positive('Debe seleccionar un profesional'),
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato de fecha inválido (YYYY-MM-DD)'),
   hora: z.string().regex(/^(0[8-9]|1[0-9]|20):(00|30)$/, 'Horario inválido (debe ser entre 08:00 y 20:30 cada 30 min)'),

@@ -17,6 +17,9 @@ export const agendaService = {
     // 1. Determinar profesional o profesionales a consultar
     let targetProfesionalId = id_profesional;
     if (user.rol === 'PROFESIONAL') {
+      if (!user.id_profesional) {
+        return []; // Corrección H-01: profesional sin vínculo válido no obtiene agenda
+      }
       targetProfesionalId = user.id_profesional;
     }
 
@@ -157,16 +160,51 @@ export const agendaService = {
     const dateMax = new Date(Date.UTC(y, m - 1, d + 30));
     const fechaLimite = dateMax.toISOString().slice(0, 10);
 
-    // Filtro por profesional si el rol es PROFESIONAL
+    // Filtro por profesional o paciente según el rol
     const isDoc = user.rol === 'PROFESIONAL';
-    const profFilter = isDoc ? 'AND t.id_profesional = ?' : '';
-    const params = isDoc ? [hoy, fechaLimite, user.id_profesional] : [hoy, fechaLimite];
+    const isPac = user.rol === 'PACIENTE';
+
+    const por_estado_vacio = {
+      PENDIENTE: 0,
+      CONFIRMADO: 0,
+      EN_CONSULTORIO: 0,
+      ASISTIDO: 0,
+      AUSENTE: 0,
+      CANCELADO: 0
+    };
+
+    // Aislamiento: si un médico o paciente no tiene ficha válida vinculada, no ve datos ajenos (RN-15, H-01)
+    if (isDoc && !user.id_profesional) {
+      return {
+        ventana: { desde: hoy, hasta: fechaLimite },
+        indicadores: { total: 0, confirmados: 0, cancelados: 0, por_estado: { ...por_estado_vacio } },
+        proximos: []
+      };
+    }
+    if (isPac && !user.id_paciente) {
+      return {
+        ventana: { desde: hoy, hasta: fechaLimite },
+        indicadores: { total: 0, confirmados: 0, cancelados: 0, por_estado: { ...por_estado_vacio } },
+        proximos: []
+      };
+    }
+
+    let roleFilter = '';
+    let params = [hoy, fechaLimite];
+
+    if (isDoc) {
+      roleFilter = 'AND t.id_profesional = ?';
+      params.push(user.id_profesional);
+    } else if (isPac) {
+      roleFilter = 'AND t.id_paciente = ?';
+      params.push(user.id_paciente);
+    }
 
     // Contadores en la ventana [hoy, hoy+30]
     const turnosEnVentana = db.prepare(`
       SELECT t.estado, COUNT(*) as cantidad
       FROM turno t
-      WHERE t.fecha >= ? AND t.fecha <= ? ${profFilter}
+      WHERE t.fecha >= ? AND t.fecha <= ? ${roleFilter}
       GROUP BY t.estado
     `).all(...params);
 
@@ -187,19 +225,31 @@ export const agendaService = {
       total += r.cantidad;
     }
 
-    // Próximos turnos: desde ahora en adelante, no cancelados, máx 5 (CA-18.2, Q8)
-    const proximosParams = isDoc ? [hoy, hoy, horaActual, user.id_profesional] : [hoy, hoy, horaActual];
+    // Próximos turnos: desde ahora en adelante, no cancelados, máx 5 (CA-18.2, Q8, HU-M11)
+    let proximosRoleFilter = '';
+    const proximosParams = [hoy, hoy, horaActual];
+
+    if (isDoc) {
+      proximosRoleFilter = 'AND t.id_profesional = ?';
+      proximosParams.push(user.id_profesional);
+    } else if (isPac) {
+      proximosRoleFilter = 'AND t.id_paciente = ?';
+      proximosParams.push(user.id_paciente);
+    }
+
     const proximos = db.prepare(`
       SELECT 
         t.id_turno, t.fecha, t.hora, t.estado, t.motivo_consulta,
         pa.id_paciente, pa.dni AS paciente_dni, pa.nombre AS paciente_nombre, pa.apellido AS paciente_apellido,
-        pr.id_profesional, pr.nombre AS profesional_nombre, pr.apellido AS profesional_apellido, pr.consultorio
+        pr.id_profesional, pr.nombre AS profesional_nombre, pr.apellido AS profesional_apellido, pr.consultorio,
+        e.nombre AS especialidad_nombre
       FROM turno t
       JOIN paciente pa ON t.id_paciente = pa.id_paciente
       JOIN profesional pr ON t.id_profesional = pr.id_profesional
+      JOIN especialidad e ON pr.id_especialidad = e.id_especialidad
       WHERE (t.fecha > ? OR (t.fecha = ? AND t.hora >= ?))
         AND t.estado <> 'CANCELADO'
-        ${isDoc ? 'AND t.id_profesional = ?' : ''}
+        ${proximosRoleFilter}
       ORDER BY t.fecha ASC, t.hora ASC
       LIMIT 5
     `).all(...proximosParams);

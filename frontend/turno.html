@@ -38,7 +38,7 @@
 
         <form id="turnForm" class="grid-form" novalidate>
           <!-- Selector de Paciente con Búsqueda en tiempo real (FE-TUR-01 / DUDA-20) -->
-          <div class="field span-2">
+          <div class="field span-2" id="patientFieldGroup">
             <label for="patientSearchInput">Paciente * (escriba DNI, nombre o apellido)</label>
             <div class="combobox-wrap">
               <input type="text" id="patientSearchInput" placeholder="Buscar paciente por DNI o nombre..." autocomplete="off" required>
@@ -148,13 +148,13 @@
               <tr>
                 <th>Fecha</th>
                 <th>Hora</th>
-                <th>Paciente</th>
+                <th id="thPatient">Paciente</th>
                 <th>Profesional</th>
                 <th>Especialidad</th>
                 <th>Consultorio</th>
                 <th>Motivo</th>
                 <th>Estado</th>
-                <th style="min-width: 170px;">Acciones</th>
+                <th id="thActions" style="min-width: 170px;">Acciones</th>
               </tr>
             </thead>
             <tbody id="turnsTable">

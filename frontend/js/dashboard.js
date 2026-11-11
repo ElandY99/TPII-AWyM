@@ -69,6 +69,7 @@
       return;
     }
 
+    const isPac = window.AppSession.isPaciente ? window.AppSession.isPaciente() : false;
     const fragment = document.createDocumentFragment();
 
     proximos.forEach((t) => {
@@ -76,13 +77,16 @@
 
       const pacienteNombre = `${window.AppHelpers.esc(t.paciente_apellido)}, ${window.AppHelpers.esc(t.paciente_nombre)}`;
       const pacienteInfo = `${pacienteNombre} <br><small class="muted">DNI ${window.AppHelpers.esc(t.paciente_dni)}</small>`;
+      const col3Content = isPac
+        ? `<strong>${window.AppHelpers.esc(t.especialidad_nombre || 'Medicina')}</strong>`
+        : pacienteInfo;
       const profesionalNombre = `${window.AppHelpers.esc(t.profesional_nombre)} ${window.AppHelpers.esc(t.profesional_apellido)}`;
       const consultorioLabel = t.consultorio ? window.AppHelpers.esc(t.consultorio) : '-';
 
       tr.innerHTML = `
         <td><strong>${window.AppHelpers.formatDate(t.fecha)}</strong></td>
         <td><code>${window.AppHelpers.esc(t.hora)}</code></td>
-        <td>${pacienteInfo}</td>
+        <td>${col3Content}</td>
         <td>${profesionalNombre}</td>
         <td>${consultorioLabel}</td>
         <td>${window.AppHelpers.statusBadge(t.estado)}</td>
@@ -103,6 +107,19 @@
       dashSubtitle.textContent = 'Métricas y próximos turnos bajo su atención médica directa.';
       if (newTurnBtn) {
         newTurnBtn.classList.add('hidden');
+      }
+    } else if (usuario.rol === 'PACIENTE') {
+      dashSubtitle.textContent = 'Métricas y próximos turnos programados para su atención.';
+      const sectionTitle = document.getElementById('dashSectionTitle');
+      if (sectionTitle) {
+        sectionTitle.textContent = 'Mis próximos turnos';
+      }
+      if (newTurnBtn) {
+        newTurnBtn.textContent = '+ Solicitar turno';
+      }
+      const thPaciente = document.getElementById('thDashPaciente');
+      if (thPaciente) {
+        thPaciente.textContent = 'Especialidad';
       }
     }
   }

@@ -61,16 +61,16 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
       body: JSON.stringify({
         id_paciente: 1,
         id_profesional: 1,
-        fecha: '2026-11-02', // Lunes futuro
+        fecha: '2026-11-16', // Lunes futuro
         hora: '09:00'
       })
     });
     assert.equal(res.status, 403);
   }
 
-  // 2. Recepcionista consulta horarios libres para fecha futura (Lunes 2026-11-02)
+  // 2. Recepcionista consulta horarios libres para fecha futura (Lunes 2026-11-16)
   {
-    const res = await fetch(`${baseUrl}/api/turnos/disponibles?fecha=2026-11-02&id_profesional=1`, {
+    const res = await fetch(`${baseUrl}/api/turnos/disponibles?fecha=2026-11-16&id_profesional=1`, {
       headers: { Cookie: recepcionCookie }
     });
     assert.equal(res.status, 200);
@@ -88,7 +88,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
       body: JSON.stringify({
         id_paciente: 1,
         id_profesional: 1,
-        fecha: '2026-11-02',
+        fecha: '2026-11-16',
         hora: '09:00',
         motivo_consulta: 'Revisión anual'
       })
@@ -107,7 +107,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
       body: JSON.stringify({
         id_paciente: 2,
         id_profesional: 1,
-        fecha: '2026-11-02',
+        fecha: '2026-11-16',
         hora: '09:00'
       })
     });
@@ -158,7 +158,7 @@ test('Gestión de Turnos, Concurrencia y Estados (Fase 7)', async (t) => {
     assert.equal(body.data.estado, 'CANCELADO');
 
     // Comprobar que el horario 09:00 vuelve a figurar libre
-    const resLibres = await fetch(`${baseUrl}/api/turnos/disponibles?fecha=2026-11-02&id_profesional=1`, {
+    const resLibres = await fetch(`${baseUrl}/api/turnos/disponibles?fecha=2026-11-16&id_profesional=1`, {
       headers: { Cookie: recepcionCookie }
     });
     const libresBody = await resLibres.json();

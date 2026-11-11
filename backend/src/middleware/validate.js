@@ -14,6 +14,9 @@ export function validate(schemas) {
       const result = schemas.params.safeParse(req.params);
       if (!result.success) {
         Object.assign(fieldErrors, result.error.flatten().fieldErrors);
+        if (result.error.flatten().formErrors?.length) {
+          fieldErrors._params = result.error.flatten().formErrors;
+        }
       } else {
         req.valid.params = result.data;
       }
@@ -23,6 +26,9 @@ export function validate(schemas) {
       const result = schemas.query.safeParse(req.query);
       if (!result.success) {
         Object.assign(fieldErrors, result.error.flatten().fieldErrors);
+        if (result.error.flatten().formErrors?.length) {
+          fieldErrors._query = result.error.flatten().formErrors;
+        }
       } else {
         req.valid.query = result.data;
       }
@@ -32,6 +38,9 @@ export function validate(schemas) {
       const result = schemas.body.safeParse(req.body);
       if (!result.success) {
         Object.assign(fieldErrors, result.error.flatten().fieldErrors);
+        if (result.error.flatten().formErrors?.length) {
+          fieldErrors._body = result.error.flatten().formErrors;
+        }
       } else {
         req.valid.body = result.data;
       }

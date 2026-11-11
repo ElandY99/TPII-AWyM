@@ -43,9 +43,11 @@ export const userRepository = {
     const db = getDb();
     return db.prepare(`
       SELECT u.id_usuario, u.nombre, u.apellido, u.correo, u.rol, u.estado, u.fecha_creacion,
-             p.id_profesional, p.matricula, p.consultorio, p.id_especialidad
+             p.id_profesional, p.matricula, p.consultorio, p.id_especialidad,
+             pac.id_paciente, pac.dni AS paciente_dni
       FROM usuario u
       LEFT JOIN profesional p ON p.id_usuario = u.id_usuario
+      LEFT JOIN paciente pac ON pac.id_usuario = u.id_usuario
       WHERE u.id_usuario = ?
     `).get(id);
   },

@@ -25,16 +25,25 @@ export const profesionalDataSchema = z.object({
   consultorio: z.string().trim().min(1, 'El consultorio es requerido').max(20, 'Máximo 20 caracteres')
 }).strict();
 
-// Creación de usuario (Q4: si es PROFESIONAL, se exige profesional y disponibilidad)
+// Datos de paciente si rol === 'PACIENTE'
+export const pacienteDataSchema = z.object({
+  dni: z.string().regex(/^\d{7,8}$/, 'El DNI debe tener 7 u 8 dígitos numéricos'),
+  telefono: z.string().regex(/^\d{1,12}$/, 'El teléfono solo debe contener números (máximo 12)').optional().nullable(),
+  fecha_nacimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato de fecha inválido (YYYY-MM-DD)').optional().nullable(),
+  obra_social: z.string().trim().max(100).optional().nullable()
+}).strict();
+
+// Creación de usuario (Q4: si es PROFESIONAL, se exige profesional y disponibilidad; si es PACIENTE, se exige ficha paciente)
 export const userCreateSchema = z.object({
   nombre: z.string().trim().min(2, 'El nombre debe tener al menos 2 caracteres').max(50, 'Máximo 50 caracteres'),
   apellido: z.string().trim().min(2, 'El apellido debe tener al menos 2 caracteres').max(50, 'Máximo 50 caracteres'),
   correo: z.string().trim().email('Formato de correo electrónico inválido').toLowerCase(),
-  rol: z.enum(['RECEPCIONISTA', 'PROFESIONAL'], {
-    errorMap: () => ({ message: 'El rol debe ser RECEPCIONISTA o PROFESIONAL' })
+  rol: z.enum(['RECEPCIONISTA', 'PROFESIONAL', 'PACIENTE'], {
+    errorMap: () => ({ message: 'El rol debe ser RECEPCIONISTA, PROFESIONAL o PACIENTE' })
   }),
   profesional: profesionalDataSchema.optional(),
-  disponibilidad: z.array(franjaHorariaSchema).optional()
+  disponibilidad: z.array(franjaHorariaSchema).optional(),
+  paciente: pacienteDataSchema.optional()
 }).strict().superRefine((data, ctx) => {
   if (data.rol === 'PROFESIONAL') {
     if (!data.profesional) {
@@ -52,6 +61,15 @@ export const userCreateSchema = z.object({
       });
     }
   }
+  if (data.rol === 'PACIENTE') {
+    if (!data.paciente || !data.paciente.dni) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Para el rol PACIENTE debe ingresar los datos del paciente (DNI)',
+        path: ['paciente']
+      });
+    }
+  }
 });
 
 // Modificación de usuario (sin cambio de rol, según definición confirmada)
@@ -65,7 +83,7 @@ export const userFilterSchema = z.object({
   nombre: z.string().trim().optional(),
   apellido: z.string().trim().optional(),
   correo: z.string().trim().optional(),
-  rol: z.enum(['ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL']).optional(),
+  rol: z.enum(['ADMINISTRADOR', 'RECEPCIONISTA', 'PROFESIONAL', 'PACIENTE']).optional(),
   estado: z.enum(['0', '1', 'todos']).optional()
 }).strict();
 

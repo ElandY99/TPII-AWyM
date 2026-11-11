@@ -1,0 +1,8 @@
+{
+  "ignore": {
+    "customPatterns": ["**/node_modules/**", "**/Info_del_proyecto/**", "**/css/**", "**/requirements.md", "**/MANUAL_DE_INSTALACION_Y_CONFIGURACION.pdf"],
+    "useGitignore": true,
+    "useDotIgnore": true,
+    "useDefaultPatterns": true
+  }
+}

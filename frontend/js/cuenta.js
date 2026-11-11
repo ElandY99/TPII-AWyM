@@ -28,8 +28,18 @@
         ? 'Administrador General'
         : usuario.rol === 'RECEPCIONISTA'
         ? 'Recepcionista'
-        : 'Profesional Médico';
+        : usuario.rol === 'PROFESIONAL'
+        ? 'Profesional Médico'
+        : 'Paciente';
     document.getElementById('userRole').textContent = rolTexto;
+
+    if (usuario.rol === 'PACIENTE') {
+      const dniField = document.getElementById('patientDniField');
+      if (dniField) {
+        dniField.classList.remove('hidden');
+        document.getElementById('userDni').textContent = usuario.dni || '-';
+      }
+    }
 
     profileLoading.classList.add('hidden');
     profileContent.classList.remove('hidden');

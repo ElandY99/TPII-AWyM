@@ -163,7 +163,8 @@
       create: (data) => request('/api/pacientes', { method: 'POST', body: data }),
       update: (id, data) => request(`/api/pacientes/${id}`, { method: 'PUT', body: data }),
       deactivate: (id) => request(`/api/pacientes/${id}`, { method: 'DELETE' }),
-      activate: (id) => request(`/api/pacientes/${id}/activar`, { method: 'PATCH' })
+      activate: (id) => request(`/api/pacientes/${id}/activar`, { method: 'PATCH' }),
+      resetPassword: (id) => request(`/api/pacientes/${id}/clave`, { method: 'POST' })
     },
 
     // 6. Turnos Médicos

@@ -28,10 +28,13 @@ export function requireAuth(req, res, next) {
       u.correo,
       u.rol,
       u.estado,
-      p.id_profesional
+      p.id_profesional,
+      pac.id_paciente,
+      pac.dni AS paciente_dni
     FROM sesion s
     JOIN usuario u ON s.id_usuario = u.id_usuario
     LEFT JOIN profesional p ON p.id_usuario = u.id_usuario AND p.estado = 1
+    LEFT JOIN paciente pac ON pac.id_usuario = u.id_usuario AND pac.estado = 1
     WHERE s.id_sesion = ?
   `).get(tokenHash);
 
@@ -57,7 +60,9 @@ export function requireAuth(req, res, next) {
     apellido: row.apellido,
     correo: row.correo,
     rol: row.rol,
-    id_profesional: row.id_profesional || null
+    id_profesional: row.id_profesional || null,
+    id_paciente: row.id_paciente || null,
+    dni: row.paciente_dni || null
   };
 
   next();

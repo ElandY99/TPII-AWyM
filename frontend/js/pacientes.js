@@ -97,6 +97,15 @@
       editBtn.addEventListener('click', () => openEditForm(p));
       actionsCell.appendChild(editBtn);
 
+      // Botón Restablecer Clave (Admin y Recep - RFM-23)
+      const resetBtn = document.createElement('button');
+      resetBtn.type = 'button';
+      resetBtn.className = 'btn btn-light btn-xs';
+      resetBtn.textContent = 'Clave';
+      resetBtn.title = 'Restablecer contraseña del paciente';
+      resetBtn.addEventListener('click', () => handleResetPassword(p));
+      actionsCell.appendChild(resetBtn);
+
       // Botones de Desactivar / Reactivar (Solo ADMIN)
       if (isAdmin) {
         if (p.estado === 1) {
@@ -229,6 +238,72 @@
   }
 
   /**
+   * Muestra el modal con la contraseña autogenerada (RFM-03, RN-17).
+   */
+  function showGeneratedPasswordModal(clave, correo) {
+    const contentHtml = `
+      <p style="margin-top: 0;">Se ha generado una nueva contraseña segura para el paciente con correo <strong>${window.AppHelpers.esc(correo)}</strong>:</p>
+      <div class="password-box">
+        <span class="password-code" id="modalPasswordCode">${window.AppHelpers.esc(clave)}</span>
+        <button type="button" class="btn btn-secondary btn-xs" id="copyPasswordBtn">Copiar</button>
+      </div>
+      <p style="color: var(--danger); font-size: 0.88rem; font-weight: 600; margin-bottom: 0;">
+        ⚠️ Esta contraseña se muestra una sola vez. Asegúrese de copiarla y entregarla al paciente para su primer ingreso al sistema.
+      </p>
+    `;
+
+    const modal = window.AppUI.modal({
+      title: 'Contraseña generada',
+      size: 'sm',
+      content: contentHtml,
+      actions: [
+        {
+          label: 'Entendido y cerrar',
+          className: 'btn btn-primary',
+          onClick: (_, close) => close()
+        }
+      ]
+    });
+
+    const copyBtn = modal.dialog.querySelector('#copyPasswordBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(clave);
+          copyBtn.textContent = '¡Copiado!';
+          window.AppUI.showToast('Contraseña copiada al portapapeles.', 'ok');
+          setTimeout(() => {
+            copyBtn.textContent = 'Copiar';
+          }, 2000);
+        } catch {
+          window.AppUI.showToast('No se pudo copiar automáticamente. Selecciónela y cópiela manualmente.', 'info');
+        }
+      });
+    }
+  }
+
+  /**
+   * Restablecimiento de contraseña de un paciente (RFM-23, CA-M14.1).
+   */
+  async function handleResetPassword(p) {
+    const ok = await window.AppUI.confirm({
+      title: 'Restablecer contraseña de paciente',
+      message: `Se generará una nueva contraseña para ${p.nombre} ${p.apellido} (${p.correo}) y se cerrarán sus sesiones activas. ¿Desea continuar?`,
+      confirmText: 'Restablecer clave'
+    });
+
+    if (!ok) return;
+
+    try {
+      const res = await window.Api.pacientes.resetPassword(p.id_paciente);
+      window.AppUI.showToast('Contraseña restablecida con éxito.', 'ok');
+      showGeneratedPasswordModal(res.clave_generada, p.correo);
+    } catch (err) {
+      window.AppUI.showToast(err.message || 'No se pudo restablecer la contraseña.', 'bad');
+    }
+  }
+
+  /**
    * Manejador del submit de alta o edición.
    */
   async function handleFormSubmit(e) {
@@ -249,13 +324,19 @@
       if (isEdit) {
         await window.Api.pacientes.update(id, data);
         window.AppUI.showToast('Paciente actualizado correctamente.', 'ok');
+        closeForm();
+        loadPatients();
       } else {
-        await window.Api.pacientes.create(data);
-        window.AppUI.showToast('Paciente registrado correctamente.', 'ok');
-      }
+        const res = await window.Api.pacientes.create(data);
+        closeForm();
+        loadPatients();
 
-      closeForm();
-      loadPatients();
+        if (res.clave_generada) {
+          showGeneratedPasswordModal(res.clave_generada, data.correo);
+        } else {
+          window.AppUI.showToast('Paciente registrado correctamente.', 'ok');
+        }
+      }
     } catch (err) {
       if (err.status === 400 || err.status === 409) {
         window.AppUI.renderFieldErrors(patientForm, err.campos);

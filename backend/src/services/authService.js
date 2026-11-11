@@ -74,8 +74,13 @@ export const authService = {
 
     createSession();
 
-    // Obtener si es profesional
+    // Obtener si es profesional o paciente
     const profesional = db.prepare('SELECT id_profesional FROM profesional WHERE id_usuario = ? AND estado = 1').get(user.id_usuario);
+    const paciente = db.prepare('SELECT id_paciente, dni, estado FROM paciente WHERE id_usuario = ?').get(user.id_usuario);
+
+    if (user.rol === 'PACIENTE' && (!paciente || !paciente.estado)) {
+      throw new ForbiddenError('Acceso denegado. Cuenta o ficha de paciente inactiva');
+    }
 
     return {
       token,
@@ -85,7 +90,9 @@ export const authService = {
         apellido: user.apellido,
         correo: user.correo,
         rol: user.rol,
-        id_profesional: profesional ? profesional.id_profesional : null
+        id_profesional: profesional ? profesional.id_profesional : null,
+        id_paciente: paciente ? paciente.id_paciente : null,
+        dni: paciente ? paciente.dni : null
       }
     };
   },

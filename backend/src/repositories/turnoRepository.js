@@ -2,10 +2,20 @@ import { getDb } from '../db/connection.js';
 import { escapeLike } from '../core/text.js';
 
 export const turnoRepository = {
-  findAll({ fecha, hora, paciente, profesional, estado, id_profesional_scope }) {
+  findAll({ fecha, hora, paciente, profesional, estado, id_profesional_scope, id_paciente_scope }) {
     const db = getDb();
     const conditions = [];
     const params = [];
+
+    // Si el usuario autenticado es PACIENTE, se restringe estrictamente a sus turnos (RFM-17, RFM-19)
+    if (id_paciente_scope) {
+      conditions.push('t.id_paciente = ?');
+      params.push(id_paciente_scope);
+    } else if (paciente) {
+      conditions.push('(pa.dni LIKE \'%\' || ? || \'%\' ESCAPE \'\\\' OR normalizar(pa.nombre) LIKE \'%\' || normalizar(?) || \'%\' ESCAPE \'\\\' OR normalizar(pa.apellido) LIKE \'%\' || normalizar(?) || \'%\' ESCAPE \'\\\')');
+      const escPac = escapeLike(paciente);
+      params.push(escPac, escPac, escPac);
+    }
 
     // Si el usuario autenticado es PROFESIONAL, se restringe estrictamente a sus turnos (D-02, CA-15.3)
     if (id_profesional_scope) {
@@ -23,11 +33,6 @@ export const turnoRepository = {
     if (hora) {
       conditions.push('t.hora = ?');
       params.push(hora);
-    }
-    if (paciente) {
-      conditions.push('(pa.dni LIKE \'%\' || ? || \'%\' ESCAPE \'\\\' OR normalizar(pa.nombre) LIKE \'%\' || normalizar(?) || \'%\' ESCAPE \'\\\' OR normalizar(pa.apellido) LIKE \'%\' || normalizar(?) || \'%\' ESCAPE \'\\\')');
-      const escPac = escapeLike(paciente);
-      params.push(escPac, escPac, escPac);
     }
     if (estado !== undefined && estado !== 'todos') {
       conditions.push('t.estado = ?');

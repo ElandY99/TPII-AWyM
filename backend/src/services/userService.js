@@ -1,5 +1,6 @@
 import { userRepository } from '../repositories/userRepository.js';
 import { profesionalRepository } from '../repositories/profesionalRepository.js';
+import { pacienteRepository } from '../repositories/pacienteRepository.js';
 import { especialidadRepository } from '../repositories/especialidadRepository.js';
 import { hashPassword, generatePassword } from '../core/passwords.js';
 import { NotFoundError, ConflictError, ForbiddenError, ValidationError } from '../core/errors.js';
@@ -60,6 +61,16 @@ export const userService = {
       this.validateFranjasOverlap(data.disponibilidad);
     }
 
+    // 2b. Si es PACIENTE, validar DNI único
+    if (data.rol === 'PACIENTE') {
+      const existingDni = pacienteRepository.findByDni(data.paciente.dni);
+      if (existingDni) {
+        throw new ConflictError('El DNI ingresado ya se encuentra registrado en el sistema.', {
+          'paciente.dni': 'DNI ya registrado'
+        });
+      }
+    }
+
     // 3. Generar contraseña aleatoria que cumple la política
     const generatedPassword = generatePassword();
     const clave_hash = await hashPassword(generatedPassword);
@@ -115,6 +126,25 @@ export const userService = {
           }
         });
       }
+
+      // Si es paciente, crear ficha vinculada
+      if (data.rol === 'PACIENTE') {
+        const newPacId = pacienteRepository.create({
+          ...data.paciente,
+          nombre: data.nombre,
+          apellido: data.apellido,
+          correo: data.correo,
+          id_usuario: Number(newUserId)
+        });
+
+        auditService.log({
+          id_usuario: adminUserId,
+          accion: 'CREAR',
+          entidad: 'PACIENTE',
+          id_entidad: Number(newPacId),
+          despues: { id: newPacId, id_usuario: newUserId, ...data.paciente }
+        });
+      }
     });
 
     tx();
@@ -154,6 +184,23 @@ export const userService = {
         `).run(data.nombre, data.apellido, current.id_profesional);
       }
 
+      // Si tiene paciente vinculado, mantener nombre, apellido y correo sincronizados (RFM-28)
+      if (current.rol === 'PACIENTE' && current.id_paciente) {
+        db.prepare(`
+          UPDATE paciente
+          SET nombre = ?, apellido = ?, correo = ?
+          WHERE id_paciente = ?
+        `).run(data.nombre, data.apellido, data.correo, current.id_paciente);
+
+        auditService.log({
+          id_usuario: adminUserId,
+          accion: 'MODIFICAR',
+          entidad: 'PACIENTE',
+          id_entidad: current.id_paciente,
+          despues: { nombre: data.nombre, apellido: data.apellido, correo: data.correo }
+        });
+      }
+
       auditService.log({
         id_usuario: adminUserId,
         accion: 'MODIFICAR',
@@ -187,10 +234,32 @@ export const userService = {
       }
     }
 
+    // Si es paciente, verificar que no tenga turnos futuros activos (RFM-06, RN-19)
+    if (current.rol === 'PACIENTE' && current.id_paciente) {
+      const { fecha } = getNowInArgentina();
+      const activeTurnos = pacienteRepository.countActiveFutureTurnos(current.id_paciente, fecha);
+      if (activeTurnos > 0) {
+        throw new ConflictError(
+          `No es posible desactivar al usuario porque posee ${activeTurnos} turno(s) futuro(s) activo(s). Cancele o reprograme dichos turnos primero.`
+        );
+      }
+    }
+
     const db = getDb();
     const tx = db.transaction(() => {
       userRepository.setEstado(id, 0);
       userRepository.deleteSessions(id);
+
+      if (current.rol === 'PACIENTE' && current.id_paciente) {
+        pacienteRepository.setEstado(current.id_paciente, 0);
+        auditService.log({
+          id_usuario: adminUserId,
+          accion: 'DESACTIVAR',
+          entidad: 'PACIENTE',
+          id_entidad: current.id_paciente,
+          despues: { estado: 0 }
+        });
+      }
 
       auditService.log({
         id_usuario: adminUserId,
@@ -213,6 +282,17 @@ export const userService = {
     const db = getDb();
     const tx = db.transaction(() => {
       userRepository.setEstado(id, 1);
+
+      if (current.rol === 'PACIENTE' && current.id_paciente) {
+        pacienteRepository.setEstado(current.id_paciente, 1);
+        auditService.log({
+          id_usuario: adminUserId,
+          accion: 'REACTIVAR',
+          entidad: 'PACIENTE',
+          id_entidad: current.id_paciente,
+          despues: { estado: 1 }
+        });
+      }
 
       auditService.log({
         id_usuario: adminUserId,
@@ -261,17 +341,33 @@ export const userService = {
   // GESTIÓN DE PROFESIONALES
   // ---------------------------------------------------------------------------
   listProfesionales(filters = {}, user) {
-    // Si es PROFESIONAL, solo ve sus propios datos (D-02, D-07)
+    // Si es PROFESIONAL, solo ve sus propios datos (D-02, D-07, H-01)
     if (user.rol === 'PROFESIONAL') {
+      if (!user.id_profesional) return [];
       const p = profesionalRepository.findById(user.id_profesional);
       return p ? [p] : [];
     }
+
+    // Si es PACIENTE, solo ve profesionales activos y datos sanitizados (RFM-09, CA-M04.2, CA-M04.3)
+    if (user.rol === 'PACIENTE') {
+      const activeFilters = { ...filters, estado: 1 };
+      const list = profesionalRepository.findAll(activeFilters);
+      return list.map(p => ({
+        id_profesional: p.id_profesional,
+        nombre: p.nombre,
+        apellido: p.apellido,
+        consultorio: p.consultorio,
+        id_especialidad: p.id_especialidad,
+        especialidad_nombre: p.especialidad_nombre
+      }));
+    }
+
     return profesionalRepository.findAll(filters);
   },
 
   getProfesionalById(id, user) {
-    // Si es PROFESIONAL, solo puede consultar su propio ID
-    if (user.rol === 'PROFESIONAL' && user.id_profesional !== id) {
+    // Si es PROFESIONAL, solo puede consultar su propio ID (H-01)
+    if (user.rol === 'PROFESIONAL' && (!user.id_profesional || user.id_profesional !== id)) {
       throw new NotFoundError('Profesional no encontrado');
     }
 
@@ -279,6 +375,22 @@ export const userService = {
     if (!p) {
       throw new NotFoundError('Profesional no encontrado');
     }
+
+    // Si es PACIENTE, solo consultar profesionales activos con datos sanitizados (RFM-09)
+    if (user.rol === 'PACIENTE') {
+      if (!p.estado) {
+        throw new NotFoundError('Profesional no encontrado');
+      }
+      return {
+        id_profesional: p.id_profesional,
+        nombre: p.nombre,
+        apellido: p.apellido,
+        consultorio: p.consultorio,
+        id_especialidad: p.id_especialidad,
+        especialidad_nombre: p.especialidad_nombre
+      };
+    }
+
     return p;
   },
 
